@@ -13,9 +13,21 @@
     <packaging>jar</packaging>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <taskmanagement.entities.version>1.0.0</taskmanagement.entities.version>
+        <taskmanagement.services.version>1.0.0</taskmanagement.services.version>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>loremipsum.dev.taskmanagement</groupId>
+            <artifactId>entities</artifactId>
+            <version>${taskmanagement.services.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>loremipsum.dev.taskmanagement</groupId>
+            <artifactId>services</artifactId>
+            <version>${taskmanagement.services.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>
