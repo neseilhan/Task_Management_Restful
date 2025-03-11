@@ -1,4 +1,4 @@
-package loremipsum.dev.enums;
+package loremipsum.dev.taskmanagement.entities.enums;
 
 public enum TaskStatus {
     BACKLOG("BACKLOG"),

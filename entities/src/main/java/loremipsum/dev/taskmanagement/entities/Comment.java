@@ -1,5 +1,4 @@
-package loremipsum.dev;
-
+package loremipsum.dev.taskmanagement.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,20 +14,22 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "attachments")
-public class Attachment {
+@Table(name = "comments")
+public class Comment {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "task_id", nullable = false)
     private Task task;
 
-    @Column(nullable = false)
-    private String filePath;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    private LocalDateTime uploadedAt = LocalDateTime.now();
+    @Column(nullable = false, length = 1000)
+    private String content;
 
-
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

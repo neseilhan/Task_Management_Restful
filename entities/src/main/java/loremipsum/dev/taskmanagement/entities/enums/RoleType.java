@@ -1,6 +1,4 @@
-package loremipsum.dev.enums;
-
-import org.springframework.security.core.parameters.P;
+package loremipsum.dev.taskmanagement.entities.enums;
 
 public enum RoleType {
     TEAM_MEMBER("TEAM_MEMBER"),

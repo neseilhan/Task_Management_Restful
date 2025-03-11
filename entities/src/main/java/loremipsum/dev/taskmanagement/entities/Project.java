@@ -1,11 +1,11 @@
-package loremipsum.dev;
+package loremipsum.dev.taskmanagement.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import loremipsum.dev.enums.ProjectStatus;
+import loremipsum.dev.taskmanagement.entities.enums.ProjectStatus;
 
 import java.util.*;
 
@@ -17,7 +17,7 @@ import java.util.*;
 @Table(name = "projects")
 public class Project {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Column(nullable = false)

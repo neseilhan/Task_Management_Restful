@@ -1,12 +1,12 @@
-package loremipsum.dev;
+package loremipsum.dev.taskmanagement.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import loremipsum.dev.enums.TaskPriority;
-import loremipsum.dev.enums.TaskStatus;
+import loremipsum.dev.taskmanagement.entities.enums.TaskPriority;
+import loremipsum.dev.taskmanagement.entities.enums.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.UUID;
 @Table(name = "tasks")
 public class Task {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Column(nullable = false)
