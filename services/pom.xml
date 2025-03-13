@@ -15,6 +15,7 @@
     <properties>
         <taskmanagement.entities.version>1.0.0</taskmanagement.entities.version>
         <taskmanagement.repositories.version>1.0.0</taskmanagement.repositories.version>
+        <taskmanagement.dto.version>1.0.0</taskmanagement.dto.version>
     </properties>
 
     <dependencies>
@@ -27,6 +28,11 @@
             <groupId>loremipsum.dev.taskmanagement</groupId>
             <artifactId>repositories</artifactId>
             <version>${taskmanagement.repositories.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>loremipsum.dev.taskmanagement</groupId>
+            <artifactId>dto</artifactId>
+            <version>${taskmanagement.dto.version}</version>
         </dependency>
     </dependencies>
 
