@@ -1,4 +1,4 @@
-package loremipsum.dev.taskmanagement.application.exception;
+package loremipsum.dev.taskmanagement.exception;
 
 import lombok.Getter;
 

@@ -1,8 +1,8 @@
-package loremipsum.dev.taskmanagement.application.exception;
+package loremipsum.dev.taskmanagement.exception;
 
 import lombok.NoArgsConstructor;
-import loremipsum.dev.taskmanagement.application.config.Result;
-import loremipsum.dev.taskmanagement.application.config.ResultHelper;
+import loremipsum.dev.taskmanagement.config.Result;
+import loremipsum.dev.taskmanagement.config.ResultHelper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
