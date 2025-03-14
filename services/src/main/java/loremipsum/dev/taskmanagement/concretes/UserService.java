@@ -15,10 +15,10 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserService implements IUserService {
+
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
     private final PasswordEncoder passwordEncoder;
-
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -33,4 +33,23 @@ public class UserService implements IUserService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
+    //
+//    @PreAuthorize("hasAnyRole('TEAM_LEADER', 'PROJECT_MANAGER')")
+//    public Task assignTask(UUID taskId, UUID userId) {
+//        Task task = taskRepository.findById(taskId)
+//                .orElseThrow(() -> new EntityNotFoundException("Task not found"));
+//
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+//
+//        task.setAssignee(user);
+//        return taskRepository.save(task);
+//    }
+//
+//    @PreAuthorize("hasAnyRole('TEAM_LEADER', 'PROJECT_MANAGER')")
+//    public Task getTaskById(UUID taskId) {
+//        return taskRepository.findById(taskId)
+//                .orElseThrow(() -> new EntityNotFoundException("Task not found"));
+//    }
+
 }

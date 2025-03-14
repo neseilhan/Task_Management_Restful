@@ -43,8 +43,9 @@ public class AuthenticationService {
                 .roles(Collections.singleton(RoleType.TEAM_MEMBER))
                 .build();
 
-        repository.save(user);
+        var savedUser = repository.save(user);
         var jwtToken = jwtService.generateToken(user);
+        saveUserToken(savedUser, jwtToken);
         return AuthResponse.builder()
                 .accessToken(jwtToken)
                 .build();
@@ -60,6 +61,8 @@ public class AuthenticationService {
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
+        revokeAllUserTokens(user);
+        saveUserToken(user, jwtToken);
         return AuthResponse.builder()
                 .accessToken(jwtToken)
                 .build();
@@ -97,19 +100,19 @@ public class AuthenticationService {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return;
         }
-        refreshToken = authHeader.substring(7);  // Extract the token part
-        userEmail = jwtService.extractUsername(refreshToken);  // Extract the username from the token
+        refreshToken = authHeader.substring(7);
+        userEmail = jwtService.extractUsername(refreshToken);
         if (userEmail != null) {
             var user = this.repository.findByEmail(userEmail)
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
             if (jwtService.isTokenValid(refreshToken, user)) {
-                var accessToken = jwtService.generateToken(user);  // Generate a new access token
-                revokeAllUserTokens(user);  // Revoke all the user's old tokens
-                saveUserToken(user, accessToken);  // Save the new access token
+                var accessToken = jwtService.generateToken(user);
+                revokeAllUserTokens(user);
+                saveUserToken(user, accessToken);
                 var authResponse = AuthResponse.builder()
-                        .accessToken(accessToken)  // Make sure the correct field is used here
+                        .accessToken(accessToken)
                         .build();
-                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);  // Return the response
+                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
             }
         }
     }

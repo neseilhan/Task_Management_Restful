@@ -12,11 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/home")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ROLE_TEAM_MEMBER')")
+
 public class HomeController {
 
 
-    @PreAuthorize("hasRole('ROLE_TEAM_MEMBER')")
     @GetMapping("/welcome")
     public ResponseEntity<String> sayHello() {
             return ResponseEntity.ok("Hello from secured endpoint");
