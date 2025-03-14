@@ -35,27 +35,30 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITE_LIST_URL).permitAll()
-                                .requestMatchers("/home/**").hasAuthority("ROLE_" + RoleType.TEAM_MEMBER.name())
-                                .requestMatchers("/home/**").hasAuthority("ROLE_" + RoleType.TEAM_LEADER.name())
-                                .requestMatchers("/home/**").hasAuthority("ROLE_" + RoleType.PROJECT_MANAGER.name())
+                        .requestMatchers("/home/**").hasAuthority("ROLE_" + RoleType.TEAM_MEMBER.name())
+                        .requestMatchers("/home/**").hasAuthority("ROLE_" + RoleType.TEAM_LEADER.name())
+                        .requestMatchers("/home/**").hasAuthority("ROLE_" + RoleType.PROJECT_MANAGER.name())
 
-                                .requestMatchers("/projects/**").hasAuthority("ROLE_" + RoleType.PROJECT_MANAGER.name())
-                                .requestMatchers("/projects/**").hasAuthority("ROLE_" + RoleType.TEAM_LEADER.name())
+                        .requestMatchers("/projects/**").hasAuthority("ROLE_" + RoleType.PROJECT_MANAGER.name())
+                        .requestMatchers("/projects/**").hasAuthority("ROLE_" + RoleType.TEAM_LEADER.name())
 
-                                .requestMatchers("/tasks/**").hasAuthority("ROLE_" + RoleType.TEAM_MEMBER.name())
-                                .requestMatchers("/tasks/**").hasAuthority("ROLE_" + RoleType.TEAM_LEADER.name())
-                                .requestMatchers("/tasks/**").hasAuthority("ROLE_" + RoleType.PROJECT_MANAGER.name())
+                        .requestMatchers("/tasks/**").hasAuthority("ROLE_" + RoleType.TEAM_MEMBER.name())
+                        .requestMatchers("/tasks/**").hasAuthority("ROLE_" + RoleType.TEAM_LEADER.name())
+                        .requestMatchers("/tasks/**").hasAuthority("ROLE_" + RoleType.PROJECT_MANAGER.name())
 
-                                .requestMatchers("/attachments/**").hasAuthority("ROLE_" + RoleType.TEAM_MEMBER.name())
-                                .requestMatchers("/attachments/**").hasAuthority("ROLE_" + RoleType.TEAM_LEADER.name())
-                                .requestMatchers("/attachments/**").hasAuthority("ROLE_" + RoleType.PROJECT_MANAGER.name())
+                        .requestMatchers("/attachments/**").hasAuthority("ROLE_" + RoleType.TEAM_MEMBER.name())
+                        .requestMatchers("/attachments/**").hasAuthority("ROLE_" + RoleType.TEAM_LEADER.name())
+                        .requestMatchers("/attachments/**").hasAuthority("ROLE_" + RoleType.PROJECT_MANAGER.name())
 
-                                .requestMatchers("/tasks/update-name-description/**").hasAuthority("ROLE_" + RoleType.TEAM_LEADER.name())
-                                .requestMatchers("/tasks/update-name-description/**").hasAuthority("ROLE_" + RoleType.PROJECT_MANAGER.name())
+                        .requestMatchers("/tasks/update-name-description/**").hasAuthority("ROLE_" + RoleType.TEAM_LEADER.name())
+                        .requestMatchers("/tasks/update-name-description/**").hasAuthority("ROLE_" + RoleType.PROJECT_MANAGER.name())
 
-                                .requestMatchers("/tasks/comments/**").hasAuthority("ROLE_" + RoleType.TEAM_MEMBER.name())
-                                .requestMatchers("/tasks/comments/**").hasAuthority("ROLE_" + RoleType.TEAM_LEADER.name())
-                                .requestMatchers("/tasks/comments/**").hasAuthority("ROLE_" + RoleType.PROJECT_MANAGER.name())
+                        .requestMatchers("/tasks/comments/**").hasAuthority("ROLE_" + RoleType.TEAM_MEMBER.name())
+                        .requestMatchers("/tasks/comments/**").hasAuthority("ROLE_" + RoleType.TEAM_LEADER.name())
+                        .requestMatchers("/tasks/comments/**").hasAuthority("ROLE_" + RoleType.PROJECT_MANAGER.name())
+
+                        .requestMatchers("/users/**").hasAuthority("ROLE_" + RoleType.TEAM_LEADER.name())
+                        .requestMatchers("/users/**").hasAuthority("ROLE_" + RoleType.PROJECT_MANAGER.name())
 
                         .anyRequest().authenticated()
                 )

@@ -36,11 +36,13 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse register(RegisterRequest request) {
+        RoleType roleType = request.getRoleType() != null ? request.getRoleType() : RoleType.TEAM_MEMBER;
+
         var user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .roles(Collections.singleton(RoleType.TEAM_MEMBER))
+                .roles(Collections.singleton(roleType))
                 .build();
 
         var savedUser = repository.save(user);
