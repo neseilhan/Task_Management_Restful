@@ -18,6 +18,11 @@
             <artifactId>controllers</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>loremipsum.dev.taskmanagement</groupId>
+            <artifactId>dto</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
 </project>

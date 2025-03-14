@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import loremipsum.dev.taskmanagement.entities.enums.TaskPriority;
-import loremipsum.dev.taskmanagement.entities.enums.TaskStatus;
+import loremipsum.dev.taskmanagement.enums.TaskPriority;
+import loremipsum.dev.taskmanagement.enums.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.List;

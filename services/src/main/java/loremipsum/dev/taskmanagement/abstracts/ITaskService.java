@@ -1,7 +1,7 @@
 package loremipsum.dev.taskmanagement.abstracts;
 
 import loremipsum.dev.taskmanagement.entities.Task;
-import loremipsum.dev.taskmanagement.entities.enums.TaskStatus;
+import loremipsum.dev.taskmanagement.enums.TaskStatus;
 
 import java.util.List;
 import java.util.UUID;

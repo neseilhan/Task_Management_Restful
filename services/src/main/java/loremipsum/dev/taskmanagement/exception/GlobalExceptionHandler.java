@@ -51,4 +51,9 @@ public class GlobalExceptionHandler {
         Result result = ResultHelper.recordAlreadyExistsError(e.getId(), null);
         return new ResponseEntity<>(result, HttpStatus.CONFLICT);
     }
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
 }

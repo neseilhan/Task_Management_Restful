@@ -22,7 +22,7 @@
         <dependency>
             <groupId>loremipsum.dev.taskmanagement</groupId>
             <artifactId>entities</artifactId>
-            <version>${taskmanagement.services.version}</version>
+            <version>${taskmanagement.entities.version}</version>
         </dependency>
         <dependency>
             <groupId>loremipsum.dev.taskmanagement</groupId>

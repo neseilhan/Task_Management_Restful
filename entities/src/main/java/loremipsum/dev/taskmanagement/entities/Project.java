@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import loremipsum.dev.taskmanagement.entities.enums.ProjectStatus;
+import loremipsum.dev.taskmanagement.enums.ProjectStatus;
 
 import java.util.*;
 

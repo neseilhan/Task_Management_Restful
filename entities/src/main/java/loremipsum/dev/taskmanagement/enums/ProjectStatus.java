@@ -1,4 +1,4 @@
-package loremipsum.dev.taskmanagement.entities.enums;
+package loremipsum.dev.taskmanagement.enums;
 
 public enum ProjectStatus {
 
