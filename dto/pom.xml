@@ -11,6 +11,15 @@
 
     <artifactId>dto</artifactId>
     <packaging>jar</packaging>
-
+    <properties>
+        <taskmanagement.entities.version>1.0.0</taskmanagement.entities.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>loremipsum.dev.taskmanagement</groupId>
+            <artifactId>entities</artifactId>
+            <version>${taskmanagement.entities.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>
