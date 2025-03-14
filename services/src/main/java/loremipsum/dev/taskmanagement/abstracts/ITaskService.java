@@ -1,6 +1,7 @@
 package loremipsum.dev.taskmanagement.abstracts;
 
 import loremipsum.dev.taskmanagement.entities.Task;
+import loremipsum.dev.taskmanagement.enums.TaskPriority;
 import loremipsum.dev.taskmanagement.enums.TaskStatus;
 
 import java.util.List;
@@ -12,4 +13,7 @@ public interface ITaskService {
     Task getTaskById(UUID taskId);
     List<Task> getAllTasks();
     void changeTaskStatus(UUID taskId, TaskStatus status, String reason);
+    void updateTaskProgress(UUID taskId, TaskStatus status);
+    void setTaskPriority(UUID taskId, TaskPriority priority);
+    void updateTaskTitleAndDescription(UUID taskId, String title, String description);
 }
