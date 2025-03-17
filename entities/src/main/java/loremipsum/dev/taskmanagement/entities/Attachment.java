@@ -30,5 +30,7 @@ public class Attachment {
 
     private LocalDateTime uploadedAt = LocalDateTime.now();
 
+    @Column(nullable = false)
+    private boolean deleted = false;
 
 }

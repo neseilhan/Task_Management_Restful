@@ -32,4 +32,15 @@ public class Comment {
     private String content;
 
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(nullable = false)
+    private boolean deleted = false;
+
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
+
 }

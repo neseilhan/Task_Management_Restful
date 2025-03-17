@@ -1,6 +1,8 @@
 package loremipsum.dev.taskmanagement;
 import lombok.RequiredArgsConstructor;
-import loremipsum.dev.taskmanagement.concretes.UserService;
+import loremipsum.dev.taskmanagement.abstracts.IUserService;
+import loremipsum.dev.taskmanagement.config.Result;
+import loremipsum.dev.taskmanagement.config.ResultHelper;
 import loremipsum.dev.taskmanagement.entities.User;
 import loremipsum.dev.taskmanagement.request.AssignUserRequest;
 import loremipsum.dev.taskmanagement.response.UserResponse;
@@ -16,7 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+    private final IUserService userService;
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id) {
@@ -38,15 +40,15 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
+    public ResponseEntity<Result> deleteUser(@PathVariable UUID id) {
         userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ResultHelper.success());
     }
 
     @PostMapping("/assign-to-task")
-    public ResponseEntity<Void> assignUserToTask(@RequestBody AssignUserRequest request) {
+    public ResponseEntity<Result> assignUserToTask(@RequestBody AssignUserRequest request) {
         userService.assignUserToTask(request.getTaskId(), request.getUserId());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ResultHelper.success());
     }
 
     @PostMapping("/assign-to-project")

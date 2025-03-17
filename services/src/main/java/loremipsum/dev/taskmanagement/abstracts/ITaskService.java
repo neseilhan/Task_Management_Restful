@@ -13,7 +13,6 @@ public interface ITaskService {
     Task getTaskById(UUID taskId);
     List<Task> getAllTasks();
     void changeTaskStatus(UUID taskId, TaskStatus status, String reason);
-    void updateTaskProgress(UUID taskId, TaskStatus status);
     void setTaskPriority(UUID taskId, TaskPriority priority);
     void updateTaskTitleAndDescription(UUID taskId, String title, String description);
 }

@@ -9,15 +9,13 @@ import java.util.UUID;
 
 @Data
 public class UserResponse {
-    private UUID id;
-    private String username;
+    private String id;
+    private String name;
     private String email;
-    private Set<RoleType> roles;
 
     public UserResponse(User user) {
-        this.id = user.getId();
-        this.username = user.getUsername();
+        this.id = user.getId().toString();
+        this.name = user.getUsername();
         this.email = user.getEmail();
-        this.roles = user.getRoles();
     }
 }

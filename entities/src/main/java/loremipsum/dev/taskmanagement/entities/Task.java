@@ -56,5 +56,8 @@ public class Task {
 
     private String blockReason;
 
+    @Column(nullable = false)
+    private boolean deleted = false;
+
 
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IAttachmentService {
-    Attachment uploadAttachment(UUID taskId, String filePath);
-    List<Attachment> getAttachmentsByTask(UUID taskId);
+    Attachment addAttachmentToTask(UUID taskId, Attachment attachment);
+    List<Attachment> getAttachmentsByTaskId(UUID taskId);
     void deleteAttachment(UUID attachmentId);
 }

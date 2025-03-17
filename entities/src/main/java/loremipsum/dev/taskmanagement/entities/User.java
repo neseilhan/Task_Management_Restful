@@ -41,8 +41,12 @@ public class User implements UserDetails {
     @Column(name = "role")
     private Set<RoleType> roles = new HashSet<>();
 
-//    @Enumerated(EnumType.STRING)
-//    private RoleType role;
+    @ManyToMany(mappedBy = "teamMembers")
+    private Set<Project> projects = new HashSet<>();
+
+    public User(UUID uuid) {
+
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -67,5 +71,18 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

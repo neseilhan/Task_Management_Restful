@@ -35,7 +35,7 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "project_users",
             joinColumns = @JoinColumn(name = "project_id"),
@@ -43,4 +43,27 @@ public class Project {
     )
     private Set<User> teamMembers = new HashSet<>();
 
+    @Column(nullable = false)
+    private boolean deleted = false;
+
+    public List<Task> getTasks() { //null pointer exception gelmemesi icin
+        return tasks != null ? tasks : new ArrayList<>();
+    }
+
+    public Set<User> getTeamMembers() {
+        return teamMembers != null ? teamMembers : new HashSet<>();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Project)) return false;
+        Project project = (Project) o;
+        return Objects.equals(id, project.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

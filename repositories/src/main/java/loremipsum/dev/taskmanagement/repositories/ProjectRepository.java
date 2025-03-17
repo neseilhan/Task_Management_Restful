@@ -12,5 +12,5 @@ import java.util.UUID;
 @EnableJpaRepositories
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, UUID> {
-    List<Project> findByStatus(ProjectStatus status);
+    List<Project> findByDepartmentName(String departmentName);
 }

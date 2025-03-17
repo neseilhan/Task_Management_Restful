@@ -3,10 +3,13 @@ package loremipsum.dev.taskmanagement.concretes;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import loremipsum.dev.taskmanagement.abstracts.IUserService;
+import loremipsum.dev.taskmanagement.config.Message;
 import loremipsum.dev.taskmanagement.entities.Project;
 import loremipsum.dev.taskmanagement.entities.Task;
 import loremipsum.dev.taskmanagement.entities.User;
 import loremipsum.dev.taskmanagement.enums.RoleType;
+import loremipsum.dev.taskmanagement.exception.ProjectNotFoundException;
+import loremipsum.dev.taskmanagement.exception.TaskNotFoundException;
 import loremipsum.dev.taskmanagement.exception.UserNotFoundException;
 import loremipsum.dev.taskmanagement.repositories.ProjectRepository;
 import loremipsum.dev.taskmanagement.repositories.TaskRepository;
@@ -49,60 +52,60 @@ public class UserService implements IUserService {
 //        return userRepository.save(existingUser);
 //    }
 
+
     @Override
+    @PreAuthorize("hasRole('PROJECT_MANAGER')")
     public Optional<User> getUserById(UUID userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
-                throw new UserNotFoundException("User not found with ID: " + userId);
+            throw new UserNotFoundException(userId.toString());
         }
         return user;
     }
 
+
     @Override
+    @PreAuthorize("hasRole('PROJECT_MANAGER')")
     public List<User> getAllUsers() {
         List<User> users = userRepository.findAll();
         if (users.isEmpty()) {
-            return null;
+            throw new UserNotFoundException(Message.NOT_FOUND);
         }
         return users;
     }
 
+
     @Override
+    @PreAuthorize("hasRole('PROJECT_MANAGER')")
     public void deleteUser(UUID userId) {
         User existingUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+                .orElseThrow(() -> new UserNotFoundException(userId.toString()));
         existingUser.setDeleted(true);
         userRepository.save(existingUser);
     }
 
+    @Override
     @PreAuthorize("hasAnyRole('TEAM_LEADER', 'PROJECT_MANAGER')")
     public void assignUserToTask(UUID taskId, UUID userId) {
-        Optional<Task> taskOptional = taskRepository.findById(taskId);
-        Optional<User> userOptional = userRepository.findById(userId);
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException(taskId.toString()));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId.toString()));
 
-        if (taskOptional.isPresent() && userOptional.isPresent()) {
-            Task task = taskOptional.get();
-            User user = userOptional.get();
-            task.setAssignee(user);
-            taskRepository.save(task);
-        } else {
-            throw new IllegalArgumentException("Task or User not found");
-        }
+        task.setAssignee(user);
+        taskRepository.save(task);
     }
 
+    @Override
     @PreAuthorize("hasAnyRole('TEAM_LEADER', 'PROJECT_MANAGER')")
     public void assignUserToProject(UUID projectId, UUID userId) {
-        Optional<Project> projectOptional = projectRepository.findById(projectId);
-        Optional<User> userOptional = userRepository.findById(userId);
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException(projectId.toString()));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId.toString()));
 
-        if (projectOptional.isPresent() && userOptional.isPresent()) {
-            Project project = projectOptional.get();
-            User user = userOptional.get();
-            project.getTeamMembers().add(user);
-            projectRepository.save(project);
-        } else {
-            throw new IllegalArgumentException("Project or User not found");
-        }
+        project.getTeamMembers().add(user);
+        projectRepository.save(project);
     }
 
 }
