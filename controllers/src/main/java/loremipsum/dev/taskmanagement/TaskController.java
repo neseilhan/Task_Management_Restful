@@ -77,8 +77,17 @@ public class TaskController {
     }
 
     @PatchMapping("/{taskId}/status")
-    public ResponseEntity<Void> changeTaskStatus(@PathVariable UUID taskId, @RequestParam TaskStatus status, @RequestParam(required = false) String cancelReason) {
-        taskService.changeTaskStatus(taskId, status, cancelReason);
+    public ResponseEntity<Void> changeTaskStatus(@PathVariable UUID taskId, @RequestParam TaskStatus status) {
+        taskService.changeTaskStatus(taskId, status, null);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{taskId}/block-or-cancel")
+    public ResponseEntity<Void> changeBlockOrCancelReason(@PathVariable UUID taskId, @RequestParam TaskStatus status, @RequestParam String reason) {
+        if (status != TaskStatus.CANCELLED && status != TaskStatus.BLOCKED) {
+            return ResponseEntity.badRequest().build();
+        }
+        taskService.changeTaskStatus(taskId, status, reason);
         return ResponseEntity.noContent().build();
     }
 
