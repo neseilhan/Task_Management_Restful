@@ -46,11 +46,12 @@ public class GlobalExceptionHandler {
         Result result = ResultHelper.notFoundError();
         return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
     }
-//    @ExceptionHandler(DuplicateRecordException.class)
-//    public ResponseEntity<Result> handleDuplicateRecordException(DuplicateRecordException e) {
-//        Result result = ResultHelper.recordAlreadyExistsError(e.getId(), null);
-//        return new ResponseEntity<>(result, HttpStatus.CONFLICT);
-//    }
+    @ExceptionHandler(DuplicateRecordException.class)
+    public ResponseEntity<Result> handleDuplicateRecordException(DuplicateRecordException e) {
+        Result result = ResultHelper.duplicateError();
+        return new ResponseEntity<>(result, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
@@ -59,6 +60,17 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Result> handleInvalidTaskStateException(InvalidTaskStateException e) {
         Result result = ResultHelper.validationError(e.getMessage());
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(AttachmentNotFoundException.class)
+    public ResponseEntity<Result> handleAttachmentNotFoundException(AttachmentNotFoundException e) {
+        Result result = ResultHelper.notFoundError();
+        return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(CommentNotFoundException.class)
+    public ResponseEntity<Result> handleCommentNotFoundException(CommentNotFoundException e) {
+        Result result = ResultHelper.notFoundError();
+        return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
     }
 
 }

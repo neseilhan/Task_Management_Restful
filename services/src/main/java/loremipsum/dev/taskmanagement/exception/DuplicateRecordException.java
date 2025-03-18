@@ -1,15 +1,9 @@
 package loremipsum.dev.taskmanagement.exception;
 
-import lombok.Getter;
+import loremipsum.dev.taskmanagement.config.Message;
 
-import java.util.UUID;
-
-@Getter
-public class DuplicateRecordException extends RuntimeException {
-    private final Long id;
-    public DuplicateRecordException(Long id) {
-        super("Duplicate record found with id: " +id);
-        this.id = id;
+public class DuplicateRecordException extends RuntimeException{
+    public DuplicateRecordException(String id) {
+        super(Message.DUPLICATE_RECORD + id);
     }
-
 }
