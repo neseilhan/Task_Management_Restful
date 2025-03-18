@@ -13,4 +13,5 @@ public class Message {
     public static final String ATTACHMENT_NOT_FOUND = "Attachment not found with ID: ";
     public static final String COMMENT_NOT_FOUND = "Comment not found with ID: ";
     public static final String VALIDATION_ERROR = "Task state flow validation error: ";
+    public static final String DUPLICATE_RECORD = "Duplicate records are not allowed.";
 }

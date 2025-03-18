@@ -24,6 +24,9 @@ public class ResultHelper {
     public static <T> ResultData<T> recordAlreadyExistsError(String id, T data) {
         return new ResultData<>("409", Message.RECORD_ALREADY_EXISTS + id, false, data);
     }
+    public static Result duplicateError() {
+        return new Result("409", Message.DUPLICATE_RECORD, false);
+    }
 
     public static Result success(){
         return new Result("200", Message.OK, true);
