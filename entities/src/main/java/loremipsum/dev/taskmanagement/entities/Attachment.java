@@ -1,6 +1,7 @@
 package loremipsum.dev.taskmanagement.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +24,7 @@ public class Attachment {
 
     @ManyToOne
     @JoinColumn(name = "task_id", nullable = false)
+    @JsonBackReference
     private Task task;
 
     @Column(nullable = false)
@@ -33,4 +35,10 @@ public class Attachment {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    @PrePersist
+    public void prePersist() {
+        if (uploadedAt == null) {
+            uploadedAt = LocalDateTime.now();
+        }
+    }
 }

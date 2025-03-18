@@ -52,7 +52,6 @@ public class SecurityConfig {
                         .requestMatchers("/projects/{projectId}/delete").hasRole("PROJECT_MANAGER")
 
 
-
                         .requestMatchers("/tasks").hasAnyRole("TEAM_LEADER", "PROJECT_MANAGER")
                         .requestMatchers("/tasks/create").hasAnyRole("TEAM_LEADER", "PROJECT_MANAGER")
                         .requestMatchers("/tasks/{taskId}").hasAnyRole("TEAM_MEMBER", "TEAM_LEADER", "PROJECT_MANAGER")
@@ -61,10 +60,16 @@ public class SecurityConfig {
                         .requestMatchers("/tasks/{taskId}/priority").hasAnyRole("TEAM_LEADER", "PROJECT_MANAGER")
                         .requestMatchers("/tasks/{taskId}/title-description").hasAnyRole("TEAM_LEADER", "PROJECT_MANAGER")
 
+
                         .requestMatchers("/attachments/task/{taskId}").hasAnyRole("TEAM_MEMBER", "TEAM_LEADER", "PROJECT_MANAGER")
-                        .requestMatchers("/attachments/{attachmentId}").hasRole("TEAM_MEMBER")
+                        .requestMatchers("/attachments/{attachmentId}").hasAnyRole("TEAM_MEMBER", "TEAM_LEADER", "PROJECT_MANAGER")
+                        .requestMatchers("/attachments/task/{taskId}").hasAnyRole("TEAM_MEMBER", "TEAM_LEADER", "PROJECT_MANAGER")
+
 
                         .requestMatchers("/comments/task/{taskId}").hasAnyRole("TEAM_MEMBER", "TEAM_LEADER", "PROJECT_MANAGER")
+                        .requestMatchers("/comments/{id}").hasAnyRole("TEAM_MEMBER", "TEAM_LEADER", "PROJECT_MANAGER")
+                        .requestMatchers("/comments").hasAnyRole("TEAM_MEMBER", "TEAM_LEADER", "PROJECT_MANAGER")
+
 
                         .requestMatchers("/users/{id}").hasRole("PROJECT_MANAGER")
                         .requestMatchers("/users").hasRole("PROJECT_MANAGER")

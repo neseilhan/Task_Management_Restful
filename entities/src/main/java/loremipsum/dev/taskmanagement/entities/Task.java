@@ -1,5 +1,6 @@
 package loremipsum.dev.taskmanagement.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,6 +48,7 @@ public class Task {
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Attachment> attachments = new ArrayList<>();
 
     @Column(nullable = false, length = 2000)
