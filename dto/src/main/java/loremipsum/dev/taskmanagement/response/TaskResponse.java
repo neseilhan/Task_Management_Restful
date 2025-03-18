@@ -16,6 +16,7 @@ public class TaskResponse {
     private TaskPriority priority;
     private UUID assigneeId;
     private UUID projectId;
+    private boolean deleted;
 //    private String reason;
 
     public TaskResponse(Task task) {
@@ -25,6 +26,6 @@ public class TaskResponse {
         this.status = task.getStatus();
         this.priority = task.getPriority();
         this.assigneeId = task.getAssignee().getId();
-        this.projectId = task.getProject().getId();
+        this.deleted = task.isDeleted();
     }
 }

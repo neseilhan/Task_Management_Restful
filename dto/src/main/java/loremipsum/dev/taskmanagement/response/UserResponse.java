@@ -12,10 +12,12 @@ public class UserResponse {
     private String id;
     private String name;
     private String email;
+    private boolean deleted;
 
     public UserResponse(User user) {
         this.id = user.getId().toString();
         this.name = user.getUsername();
         this.email = user.getEmail();
+        this.deleted = user.isDeleted();
     }
 }

@@ -20,6 +20,7 @@ public class ProjectResponse {
     private String departmentName;
     private List<UUID> taskIds;
     private Set<UUID> teamMemberIds;
+    private boolean deleted;
 
     public ProjectResponse(Project project) {
         this.id = project.getId();
@@ -29,5 +30,6 @@ public class ProjectResponse {
         this.departmentName = project.getDepartmentName();
         this.taskIds = project.getTasks().stream().map(Task::getId).collect(Collectors.toList());
         this.teamMemberIds = project.getTeamMembers().stream().map(User::getId).collect(Collectors.toSet());
+        this.deleted = project.isDeleted();
     }
 }
