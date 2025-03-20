@@ -135,7 +135,7 @@ public class AuthenticationServiceTest {
     @Test
     void testRevokeAllUserTokens_noValidTokens() throws Exception {
         User user = new User("john.doe", "john.doe@example.com", "password123", Collections.singleton(RoleType.TEAM_MEMBER));
-        when(tokenRepository.findAllValidTokenByUser(user.getId())).thenReturn(Collections.emptyList()); // No tokens
+        when(tokenRepository.findAllValidTokenByUser(user.getId())).thenReturn(Collections.emptyList());
         Method method = AuthenticationService.class.getDeclaredMethod("revokeAllUserTokens", User.class);
         method.setAccessible(true);
         method.invoke(authenticationService, user);
