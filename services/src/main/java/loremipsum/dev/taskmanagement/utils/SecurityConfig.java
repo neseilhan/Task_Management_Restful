@@ -36,11 +36,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITE_LIST_URL).permitAll()
 
-                        .requestMatchers("/home/**").hasAnyAuthority(
-                                "ROLE_" + RoleType.TEAM_MEMBER.name(),
-                                "ROLE_" + RoleType.TEAM_LEADER.name(),
-                                "ROLE_" + RoleType.PROJECT_MANAGER.name()
-                        )
+//                        .requestMatchers("/home/**").hasAnyAuthority(
+//                                "ROLE_" + RoleType.TEAM_MEMBER.name(),
+//                                "ROLE_" + RoleType.TEAM_LEADER.name(),
+//                                "ROLE_" + RoleType.PROJECT_MANAGER.name()
+//                        )
 
                         .requestMatchers("/projects").hasRole("PROJECT_MANAGER")
                         .requestMatchers("/projects/create").hasRole("PROJECT_MANAGER")
