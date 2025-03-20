@@ -1,6 +1,7 @@
 package loremipsum.dev.taskmanagement.concretes;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -40,6 +41,7 @@ public class JwtService {
         return Jwts
                 .parser()
                 .setSigningKey(getSignInKey())
+                .setAllowedClockSkewSeconds(10)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -94,7 +96,7 @@ public class JwtService {
     }
 
     private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+            return extractExpiration(token).before(new Date());
     }
 
     private Date extractExpiration(String token) {

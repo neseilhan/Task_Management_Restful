@@ -47,6 +47,12 @@ public class User implements UserDetails {
     public User(UUID uuid) {
 
     }
+    public User(String username, String email, String password, Set<RoleType> roles) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.roles = roles != null ? roles : new HashSet<>(); //to prevent null roles
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
