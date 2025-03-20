@@ -15,6 +15,7 @@ import loremipsum.dev.taskmanagement.repositories.UserRepository;
 import loremipsum.dev.taskmanagement.request.LoginRequest;
 import loremipsum.dev.taskmanagement.request.RegisterRequest;
 import loremipsum.dev.taskmanagement.response.AuthResponse;
+import loremipsum.dev.taskmanagement.response.RegisterResponse;
 import loremipsum.dev.taskmanagement.token.Token;
 import loremipsum.dev.taskmanagement.token.TokenType;
 import org.springframework.http.HttpHeaders;
@@ -35,7 +36,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthResponse register(RegisterRequest request) {
+    public RegisterResponse register(RegisterRequest request) {
         RoleType roleType = request.getRoleType() != null ? request.getRoleType() : RoleType.TEAM_MEMBER;
 
         var user = User.builder()
@@ -48,8 +49,8 @@ public class AuthenticationService {
         var savedUser = repository.save(user);
         var jwtToken = jwtService.generateToken(user);
         saveUserToken(savedUser, jwtToken);
-        return AuthResponse.builder()
-                .accessToken(jwtToken)
+        return RegisterResponse.builder()
+                .message("User registered successfully.")
                 .build();
     }
 

@@ -9,6 +9,7 @@ import loremipsum.dev.taskmanagement.concretes.LogoutService;
 import loremipsum.dev.taskmanagement.request.LoginRequest;
 import loremipsum.dev.taskmanagement.request.RegisterRequest;
 import loremipsum.dev.taskmanagement.response.AuthResponse;
+import loremipsum.dev.taskmanagement.response.RegisterResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +28,7 @@ public class AuthController {
     private final LogoutService logoutService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authenticationService.register(request));
     }
 
@@ -39,14 +40,6 @@ public class AuthController {
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         logoutService.logout(request, response, authentication);
     }
-
-//    @PostMapping("/refresh-token")
-//    public void refreshToken(
-//            HttpServletRequest request,
-//            HttpServletResponse response
-//    ) throws IOException {
-//        service.refreshToken(request, response);
-//    }
 
 
 }
