@@ -29,6 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final ApplicationUserDetailsService appUserDetailService;
+    private final TokenRepository tokenRepository;
 
     @Override
     protected void doFilterInternal(
@@ -57,6 +58,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     return;
                 }
 
+                if (isTokenRevokedOrExpired(jwt)) {
+                    log.warn("Attempt to use a revoked/expired token.");
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token is revoked or expired");
+                    return;
+                }
+
                 if (jwtService.isTokenValid(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities()
@@ -73,5 +80,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+    private boolean isTokenRevokedOrExpired(String token) {
+        return tokenRepository.findByToken(token)
+                .map(t -> t.isExpired() || t.isRevoked())
+                .orElse(true);
     }
 }
