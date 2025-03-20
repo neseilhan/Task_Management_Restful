@@ -5,6 +5,7 @@ import loremipsum.dev.taskmanagement.config.Result;
 import loremipsum.dev.taskmanagement.config.ResultHelper;
 import loremipsum.dev.taskmanagement.entities.User;
 import loremipsum.dev.taskmanagement.request.AssignUserRequest;
+import loremipsum.dev.taskmanagement.request.UpdateUserRequest;
 import loremipsum.dev.taskmanagement.response.UserResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,5 +56,10 @@ public class UserController {
     public ResponseEntity<Void> assignUserToProject(@RequestBody AssignUserRequest request) {
         userService.assignUserToProject(request.getProjectId(), request.getUserId());
         return ResponseEntity.noContent().build();
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponse> updateUser(@PathVariable UUID id, @RequestBody UpdateUserRequest request) {
+        User updatedUser = userService.updateUser(id, request);
+        return ResponseEntity.ok(new UserResponse(updatedUser));
     }
 }

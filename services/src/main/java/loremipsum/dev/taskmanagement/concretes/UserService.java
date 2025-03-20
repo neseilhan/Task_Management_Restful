@@ -14,11 +14,13 @@ import loremipsum.dev.taskmanagement.exception.UserNotFoundException;
 import loremipsum.dev.taskmanagement.repositories.ProjectRepository;
 import loremipsum.dev.taskmanagement.repositories.TaskRepository;
 import loremipsum.dev.taskmanagement.repositories.UserRepository;
+import loremipsum.dev.taskmanagement.request.UpdateUserRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,28 +32,7 @@ public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
     private final ProjectRepository projectRepository;
-//    private final PasswordEncoder passwordEncoder;
-
-//    @Override
-//    public User createUser(User user) {
-//        // Additional logic can be added here like validation or setting defaults
-//        return userRepository.save(user);
-//    }
-//
-//    @Override
-//    public User updateUser(UUID userId, User updatedUser) {
-//        // Fetch existing user
-//        User existingUser = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        // Update user fields
-//        existingUser.setName(updatedUser.getName());
-//        existingUser.setEmail(updatedUser.getEmail());
-//        existingUser.setRole(updatedUser.getRole());
-//
-//        // Save and return the updated user
-//        return userRepository.save(existingUser);
-//    }
-
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @PreAuthorize("hasRole('PROJECT_MANAGER')")
@@ -107,5 +88,19 @@ public class UserService implements IUserService {
         project.getTeamMembers().add(user);
         projectRepository.save(project);
     }
+    @PreAuthorize("hasRole('PROJECT_MANAGER')")
+    public User updateUser(UUID userId, UpdateUserRequest request) {
+        User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new UserNotFoundException(userId.toString()));
 
+        User updatedUser = User.builder()
+                .id(user.getId())
+                .username(Optional.ofNullable(request.getUsername()).orElse(user.getUsername()))
+                .email(Optional.ofNullable(request.getEmail()).orElse(user.getEmail()))
+                .password(Optional.ofNullable(request.getPassword()).map(passwordEncoder::encode).orElse(user.getPassword()))
+                .roles(Optional.ofNullable(request.getRoleType()).map(Collections::singleton).orElse(user.getRoles()))
+                .build();
+
+        return userRepository.save(updatedUser);
+    }
 }

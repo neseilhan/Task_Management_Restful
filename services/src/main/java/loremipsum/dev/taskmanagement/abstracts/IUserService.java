@@ -1,6 +1,7 @@
 package loremipsum.dev.taskmanagement.abstracts;
 
 import loremipsum.dev.taskmanagement.entities.User;
+import loremipsum.dev.taskmanagement.request.UpdateUserRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,4 +13,5 @@ public interface IUserService {
     void deleteUser(UUID userId);
     void assignUserToTask(UUID userId, UUID taskId);
     void assignUserToProject(UUID userId, UUID projectId);
+    User updateUser(UUID userId, UpdateUserRequest request);
 }
