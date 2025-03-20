@@ -10,7 +10,8 @@ public class TaskStateFlow {
             case IN_ANALYSIS -> status == TaskStatus.IN_PROGRESS || status == TaskStatus.BLOCKED || status == TaskStatus.CANCELLED;
             case IN_PROGRESS -> status == TaskStatus.COMPLETED || status == TaskStatus.BLOCKED || status == TaskStatus.CANCELLED;
             case BLOCKED -> status == TaskStatus.IN_ANALYSIS || status == TaskStatus.IN_PROGRESS || status == TaskStatus.CANCELLED;
-            case COMPLETED, CANCELLED -> false;
+            case COMPLETED -> false;
+            case CANCELLED -> false;
         };
     }
 }
