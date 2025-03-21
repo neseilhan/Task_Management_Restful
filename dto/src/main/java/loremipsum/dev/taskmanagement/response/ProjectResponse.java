@@ -1,6 +1,8 @@
 package loremipsum.dev.taskmanagement.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import loremipsum.dev.taskmanagement.entities.Project;
 import loremipsum.dev.taskmanagement.entities.Task;
 import loremipsum.dev.taskmanagement.entities.User;
@@ -12,6 +14,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProjectResponse {
     private UUID id;
     private String title;

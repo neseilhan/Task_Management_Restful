@@ -1,6 +1,8 @@
 package loremipsum.dev.taskmanagement.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import loremipsum.dev.taskmanagement.entities.User;
 import loremipsum.dev.taskmanagement.enums.RoleType;
 
@@ -8,6 +10,8 @@ import java.util.Set;
 import java.util.UUID;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserResponse {
     private String id;
     private String name;
