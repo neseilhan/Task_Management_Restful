@@ -39,8 +39,6 @@ public class CommentControllerTest {
     @InjectMocks
     private CommentController commentController;
 
-    private ObjectMapper objectMapper;
-
     private MockMvc mockMvc;
 
     @Captor
@@ -59,7 +57,7 @@ public class CommentControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(commentController)
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
-        objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
 
         taskId = UUID.randomUUID();
         userId = UUID.randomUUID();
