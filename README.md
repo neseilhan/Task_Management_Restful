@@ -1,7 +1,7 @@
 # Task Management System
 
 ## Overview
-The Task Management System is a web application designed to manage tasks, users, and projects efficiently. It provides functionalities to assign users to tasks and projects, update user information, and handle various exceptions gracefully.
+This project, which includes elements such as project, user, task, implements a job and task management. Users can access processes according to certain roles. Projects and tasks have progress and priority statuses. Access is provided at the security layer with roles such as project manager, team leader, team member.
 
 ![task_management_clickup](https://github.com/user-attachments/assets/7c3a3a23-2c58-4aca-97d8-157ee32f8649)
 
@@ -10,15 +10,18 @@ The Task Management System is a web application designed to manage tasks, users,
 - **User Management**: Create, update, delete, and retrieve user information.
 - **Task Management**: Assign users to tasks, retrieve tasks by various criteria.
 - **Project Management**: Assign users to projects, retrieve projects by various criteria.
+- **Comment Management**: Allows management of comments made to tasks.
+- **Attachment Management**: Provides management of files added to tasks (text or image).
 - **Exception Handling**: Graceful handling of common exceptions like user not found, duplicate records, etc.
 - **Security**: Role-based access control for different functionalities.
 
 ## Technologies Used
-- **Java 11**
-- **Spring Boot**
+- **Java 21**
+- **Spring Boot 3**
 - **Spring Security**
 - **Spring Data JPA**
-- **H2 Database (for development and testing)**
+- **PostgreSql**
+- **Jacoco**
 - **JUnit 5**
 - **Mockito**
 - **Lombok**
@@ -27,7 +30,7 @@ The Task Management System is a web application designed to manage tasks, users,
 ## Getting Started
 
 ### Prerequisites
-- Java 11 or higher
+- Java 21 or higher
 - Maven
 
 ### Running the Application
@@ -102,12 +105,7 @@ mvn test
 - **DELETE /users/{id}**: Deletes the specified user by ID.
 - **PUT /users/{id}**: Updates the details of the specified user ID.
 
-
-## Exception Handling
-- **UserNotFoundException**: Thrown when a user with the specified ID is not found.
-- **DuplicateRecordException**: Thrown when trying to create a duplicate record.
-- **GlobalExceptionHandler**: Centralized exception handling for the application.
-
 ## Configuration
+
 ### Application Properties
 The application properties can be configured in the `src/main/resources/application.properties` file.
