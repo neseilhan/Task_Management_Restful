@@ -3,6 +3,10 @@
 ## Overview
 The Task Management System is a web application designed to manage tasks, users, and projects efficiently. It provides functionalities to assign users to tasks and projects, update user information, and handle various exceptions gracefully.
 
+![uml](https://github.com/user-attachments/assets/e24ad8b3-5576-4468-9e0e-29634273275c)
+
+
+
 ## Features
 - **User Management**: Create, update, delete, and retrieve user information.
 - **Task Management**: Assign users to tasks, retrieve tasks by various criteria.
