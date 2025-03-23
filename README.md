@@ -52,26 +52,244 @@ To run the tests, use the following command:
 mvn test
 ```
 
+## API Endpoints
 
-API Endpoints
-User Management
-GET /users: Retrieve all users.
-GET /users/{id}: Retrieve a user by ID.
-POST /users: Create a new user.
-PUT /users/{id}: Update an existing user.
-DELETE /users/{id}: Delete a user by ID.
-Task Management
-POST /users/assign-to-task: Assign a user to a task.
-GET /tasks/{taskId}/users: Retrieve users assigned to a task.
-Project Management
-POST /users/assign-to-project: Assign a user to a project.
-GET /projects/{projectId}/users: Retrieve users assigned to a project.
-Exception Handling
-UserNotFoundException: Thrown when a user with the specified ID is not found.
-DuplicateRecordException: Thrown when trying to create a duplicate record.
-GlobalExceptionHandler: Centralized exception handling for the application.
-Configuration
-Application Properties
-The application properties can be configured in the src/main/resources/application.properties file.
+### User Management
+- **Retrieve all users**
+  ```http
+  GET /users
+  ```
+  Response:
+  ```json
+  [
+    {
+      "id": "UUID",
+      "username": "string",
+      "email": "string",
+      "roleType": "string"
+    },
+    ...
+  ]
+  ```
 
-Object Mapper Configuration
+- **Retrieve a user by ID**
+  ```http
+  GET /users/{id}
+  ```
+  Response:
+  ```json
+  {
+    "id": "UUID",
+    "username": "string",
+    "email": "string",
+    "roleType": "string"
+  }
+  ```
+
+- **Create a new user**
+  ```http
+  POST /users
+  ```
+  Request Body:
+  ```json
+  {
+    "username": "string",
+    "email": "string",
+    "password": "string",
+    "roleType": "string"
+  }
+  ```
+  Response:
+  ```json
+  {
+    "id": "UUID",
+    "username": "string",
+    "email": "string",
+    "roleType": "string"
+  }
+  ```
+
+- **Update an existing user**
+  ```http
+  PUT /users/{id}
+  ```
+  Request Body:
+  ```json
+  {
+    "username": "string",
+    "email": "string",
+    "password": "string",
+    "roleType": "string"
+  }
+  ```
+  Response:
+  ```json
+  {
+    "id": "UUID",
+    "username": "string",
+    "email": "string",
+    "roleType": "string"
+  }
+  ```
+
+- **Delete a user by ID**
+  ```http
+  DELETE /users/{id}
+  ```
+  Response:
+  ```json
+  {
+    "message": "string"
+  }
+  ```
+
+### Task Management
+- **Assign a user to a task**
+  ```http
+  POST /users/assign-to-task
+  ```
+  Request Body:
+  ```json
+  {
+    "userId": "UUID",
+    "taskId": "UUID"
+  }
+  ```
+  Response:
+  ```json
+  {
+    "message": "string"
+  }
+  ```
+
+- **Retrieve users assigned to a task**
+  ```http
+  GET /tasks/{taskId}/users
+  ```
+  Response:
+  ```json
+  [
+    {
+      "id": "UUID",
+      "username": "string",
+      "email": "string",
+      "roleType": "string"
+    },
+    ...
+  ]
+  ```
+
+### Project Management
+- **Assign a user to a project**
+  ```http
+  POST /users/assign-to-project
+  ```
+  Request Body:
+  ```json
+  {
+    "userId": "UUID",
+    "projectId": "UUID"
+  }
+  ```
+  Response:
+  ```json
+  {
+    "message": "string"
+  }
+  ```
+
+- **Retrieve users assigned to a project**
+  ```http
+  GET /projects/{projectId}/users
+  ```
+  Response:
+  ```json
+  [
+    {
+      "id": "UUID",
+      "username": "string",
+      "email": "string",
+      "roleType": "string"
+    },
+    ...
+  ]
+  ```
+
+- **Retrieve tasks assigned to a project**
+  ```http
+  GET /projects/{projectId}/tasks
+  ```
+  Response:
+  ```json
+  [
+    {
+      "id": "UUID",
+      "title": "string",
+      "description": "string",
+      "status": "string",
+      "priority": "string",
+      "createdAt": "date-time",
+      "updatedAt": "date-time"
+    },
+    ...
+  ]
+  ```
+
+- **Retrieve projects by department**
+  ```http
+  GET /projects/department/{departmentName}
+  ```
+  Response:
+  ```json
+  [
+    {
+      "id": "UUID",
+      "name": "string",
+      "description": "string",
+      "department": "string",
+      "status": "string",
+      "createdAt": "date-time",
+      "updatedAt": "date-time"
+    },
+    ...
+  ]
+  ```
+
+- **Retrieve project team**
+  ```http
+  GET /projects/{projectId}/team
+  ```
+  Response:
+  ```json
+  [
+    {
+      "id": "UUID",
+      "username": "string",
+      "email": "string",
+      "roleType": "string"
+    },
+    ...
+  ]
+  ```
+
+- **Retrieve project status**
+  ```http
+  GET /projects/{projectId}/status
+  ```
+  Response:
+  ```json
+  {
+    "id": "UUID",
+    "status": "string",
+    "updatedAt": "date-time"
+  }
+  ```
+
+## Exception Handling
+- **UserNotFoundException**: Thrown when a user with the specified ID is not found.
+- **DuplicateRecordException**: Thrown when trying to create a duplicate record.
+- **GlobalExceptionHandler**: Centralized exception handling for the application.
+
+## Configuration
+### Application Properties
+The application properties can be configured in the `src/main/resources/application.properties` file.
