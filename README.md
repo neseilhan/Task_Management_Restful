@@ -50,8 +50,7 @@ The Task Management System is a web application designed to manage tasks, users,
 To run the tests, use the following command:
 ```sh
 mvn test
-
-
+```
 
 
 API Endpoints
