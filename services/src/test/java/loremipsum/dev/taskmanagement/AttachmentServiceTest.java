@@ -108,11 +108,11 @@ public class AttachmentServiceTest {
             attachmentService.addAttachmentToTask(taskId, file);
         });
 
-        assertEquals("Task not found with ID: " + taskId, exception.getMessage());
+        assertEquals(taskId.toString(), exception.getMessage());
 
         verify(taskRepository, times(1)).findById(taskId);
         verify(file, never()).getOriginalFilename();
-        verify(attachmentRepository, never()).save(any(Attachment.class));
+        verify(attachmentRepository, never()).save(any());
     }
 
     @Test
@@ -142,13 +142,14 @@ public class AttachmentServiceTest {
 
     @Test
     void testDeleteAttachment_DuplicateRecordException() {
+        UUID attachmentId = UUID.randomUUID();
         when(attachmentRepository.findById(attachmentId)).thenReturn(Optional.empty());
 
         DuplicateRecordException exception = assertThrows(DuplicateRecordException.class, () -> {
             attachmentService.deleteAttachment(attachmentId);
         });
 
-        assertEquals("Duplicate records are not allowed." + attachmentId, exception.getMessage());
+        assertEquals(attachmentId.toString(), exception.getMessage());
 
         verify(attachmentRepository, times(1)).findById(attachmentId);
         verify(attachmentRepository, never()).save(any(Attachment.class));

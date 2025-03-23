@@ -1,4 +1,4 @@
-package loremipsum.dev.taskmanagement.utils;
+package loremipsum.dev.taskmanagement.config;
 
 import loremipsum.dev.taskmanagement.enums.TaskStatus;
 

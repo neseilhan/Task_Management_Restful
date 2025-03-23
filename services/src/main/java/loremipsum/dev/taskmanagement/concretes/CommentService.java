@@ -2,6 +2,7 @@ package loremipsum.dev.taskmanagement.concretes;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import loremipsum.dev.taskmanagement.abstracts.ICommentService;
 import loremipsum.dev.taskmanagement.entities.Comment;
 import loremipsum.dev.taskmanagement.entities.Task;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CommentService implements ICommentService {
     private final CommentRepository commentRepository;
     private final TaskRepository taskRepository;
@@ -32,10 +34,12 @@ public class CommentService implements ICommentService {
     @Override
     @PreAuthorize("hasAnyRole('TEAM_MEMBER', 'TEAM_LEADER', 'PROJECT_MANAGER')")
     public Comment addCommentToTask(UUID taskId, UUID userId, String content) {
+        log.debug("Adding comment to task: {}, by user: {}", taskId, userId);
+
         Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new TaskNotFoundException("Task not found with id: " + taskId));
+                .orElseThrow(() -> new TaskNotFoundException(taskId.toString()));
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new UserNotFoundException(userId.toString()));
 
         Comment comment = Comment.builder()
                 .task(task)
@@ -46,6 +50,7 @@ public class CommentService implements ICommentService {
 
         return commentRepository.save(comment);
     }
+
 
     @Override
     @PreAuthorize("hasAnyRole('TEAM_MEMBER', 'TEAM_LEADER', 'PROJECT_MANAGER')")

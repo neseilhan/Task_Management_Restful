@@ -1,4 +1,4 @@
-package loremipsum.dev.taskmanagement.config;
+package loremipsum.dev.taskmanagement.resultHelper;
 
 import lombok.Getter;
 

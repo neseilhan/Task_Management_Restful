@@ -3,6 +3,8 @@ package loremipsum.dev.taskmanagement;
 import lombok.RequiredArgsConstructor;
 import loremipsum.dev.taskmanagement.abstracts.IAttachmentService;
 import loremipsum.dev.taskmanagement.entities.Attachment;
+import loremipsum.dev.taskmanagement.resultHelper.Result;
+import loremipsum.dev.taskmanagement.resultHelper.ResultHelper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +17,6 @@ import java.util.UUID;
 @RequestMapping("/attachments")
 @RequiredArgsConstructor
 public class AttachmentController {
-
     private final IAttachmentService attachmentService;
 
     @PostMapping("/task/{taskId}")
@@ -31,8 +32,8 @@ public class AttachmentController {
     }
 
     @DeleteMapping("/{attachmentId}")
-    public ResponseEntity<Void> deleteAttachment(@PathVariable UUID attachmentId) {
+    public ResponseEntity<Result> deleteAttachment(@PathVariable UUID attachmentId) {
         attachmentService.deleteAttachment(attachmentId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ResultHelper.success());
     }
 }

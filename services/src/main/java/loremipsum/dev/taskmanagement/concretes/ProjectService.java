@@ -2,7 +2,8 @@ package loremipsum.dev.taskmanagement.concretes;
 
 import lombok.RequiredArgsConstructor;
 import loremipsum.dev.taskmanagement.abstracts.IProjectService;
-import loremipsum.dev.taskmanagement.config.Message;
+import loremipsum.dev.taskmanagement.exception.TaskNotFoundException;
+import loremipsum.dev.taskmanagement.resultHelper.Message;
 import loremipsum.dev.taskmanagement.entities.Project;
 import loremipsum.dev.taskmanagement.entities.Task;
 import loremipsum.dev.taskmanagement.entities.User;
@@ -34,7 +35,7 @@ public class ProjectService implements IProjectService {
     @Override
     public Project updateProject(UUID projectId, Project project) {
         Project existingProject = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectNotFoundException(Message.NOT_FOUND));
+                .orElseThrow(() -> new ProjectNotFoundException(Message.PROJECT_NOT_FOUND));
 
         Project updatedProject = Project.builder()
                 .id(existingProject.getId())
@@ -58,7 +59,11 @@ public class ProjectService implements IProjectService {
     @PreAuthorize("hasAnyRole('TEAM_LEADER', 'PROJECT_MANAGER')")
     @Override
     public List<Project> getAllProjects() {
-        return projectRepository.findAll();
+        List<Project> projects = projectRepository.findAll();
+        if (projects == null || projects.isEmpty()) {
+            throw new ProjectNotFoundException(Message.PROJECT_NOT_FOUND);
+        }
+        return projects;
     }
 
     @PreAuthorize("hasRole('PROJECT_MANAGER')")
@@ -67,7 +72,7 @@ public class ProjectService implements IProjectService {
         Project existingProject = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException(projectId.toString()));
 
-        existingProject.setDeleted(true); // or set status to 'CANCELLED'
+        existingProject.setDeleted(true);
         projectRepository.save(existingProject);
     }
 

@@ -1,9 +1,11 @@
 package loremipsum.dev.taskmanagement;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import loremipsum.dev.taskmanagement.abstracts.ICommentService;
 import loremipsum.dev.taskmanagement.entities.Comment;
 import loremipsum.dev.taskmanagement.entities.Task;
 import loremipsum.dev.taskmanagement.entities.User;
+import loremipsum.dev.taskmanagement.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,8 +24,11 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 public class CommentControllerTest {
@@ -34,6 +39,8 @@ public class CommentControllerTest {
     @InjectMocks
     private CommentController commentController;
 
+    private ObjectMapper objectMapper;
+
     private MockMvc mockMvc;
 
     @Captor
@@ -42,17 +49,22 @@ public class CommentControllerTest {
     @Captor
     private ArgumentCaptor<String> contentCaptor;
 
+    private UUID taskId;
+    private UUID userId;
+    private Comment comment;
+    private String content;
+
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(commentController).build();
-    }
+        mockMvc = MockMvcBuilders.standaloneSetup(commentController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
+        objectMapper = new ObjectMapper();
 
-    @Test
-    void testAddCommentToTask() throws Exception {
-        UUID taskId = UUID.randomUUID();
-        UUID userId = UUID.randomUUID();
-        String content = "This is a test comment";
-        Comment comment = new Comment();
+        taskId = UUID.randomUUID();
+        userId = UUID.randomUUID();
+        content = "This is a test comment";
+        comment = new Comment();
         comment.setId(UUID.randomUUID());
 
         Task task = new Task();
@@ -62,7 +74,10 @@ public class CommentControllerTest {
         User user = new User();
         user.setId(userId);
         comment.setUser(user);
+    }
 
+    @Test
+    void testAddCommentToTask() throws Exception {
         when(commentService.addCommentToTask(any(UUID.class), any(UUID.class), anyString())).thenReturn(comment);
 
         mockMvc.perform(post("/comments/task/{taskId}/user/{userId}", taskId, userId)
@@ -79,7 +94,6 @@ public class CommentControllerTest {
 
     @Test
     void testGetCommentsByTaskId() throws Exception {
-        UUID taskId = UUID.randomUUID();
         Comment comment = new Comment();
         comment.setId(UUID.randomUUID());
 
@@ -91,9 +105,7 @@ public class CommentControllerTest {
         user.setId(UUID.randomUUID());
         comment.setUser(user);
 
-        List<Comment> comments = List.of(comment);
-
-        when(commentService.getCommentsByTaskId(any(UUID.class))).thenReturn(comments);
+        when(commentService.getCommentsByTaskId(any(UUID.class))).thenReturn(List.of(comment));
 
         mockMvc.perform(get("/comments/task/{taskId}", taskId))
                 .andExpect(status().isOk())
@@ -116,9 +128,7 @@ public class CommentControllerTest {
         user.setId(UUID.randomUUID());
         comment.setUser(user);
 
-        List<Comment> comments = List.of(comment);
-
-        when(commentService.getAllComments()).thenReturn(comments);
+        when(commentService.getAllComments()).thenReturn(List.of(comment));
 
         mockMvc.perform(get("/comments"))
                 .andExpect(status().isOk())
@@ -129,17 +139,7 @@ public class CommentControllerTest {
 
     @Test
     void testGetCommentById() throws Exception {
-        UUID commentId = UUID.randomUUID();
-        Comment comment = new Comment();
-        comment.setId(commentId);
-
-        Task task = new Task();
-        task.setId(UUID.randomUUID());
-        comment.setTask(task);
-
-        User user = new User();
-        user.setId(UUID.randomUUID());
-        comment.setUser(user);
+        UUID commentId = comment.getId();
 
         when(commentService.getCommentById(any(UUID.class))).thenReturn(comment);
 
@@ -153,7 +153,7 @@ public class CommentControllerTest {
 
     @Test
     void testDeleteComment() throws Exception {
-        UUID commentId = UUID.randomUUID();
+        UUID commentId = comment.getId();
 
         doNothing().when(commentService).deleteComment(any(UUID.class));
 

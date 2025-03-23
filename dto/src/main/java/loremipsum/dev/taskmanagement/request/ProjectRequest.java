@@ -15,13 +15,14 @@ public class ProjectRequest {
     private String description;
     private String departmentName;
     private ProjectStatus status;
+    private List<UUID> teamMembers;
 
     public Project toProject() {
         return Project.builder()
                 .title(this.title)
                 .description(this.description)
                 .departmentName(this.departmentName)
-                .status(this.status != null ? this.status : ProjectStatus.IN_PROGRESS) //default gelir
+                .status(this.status != null ? this.status : ProjectStatus.IN_PROGRESS)
                 .build();
     }
 }

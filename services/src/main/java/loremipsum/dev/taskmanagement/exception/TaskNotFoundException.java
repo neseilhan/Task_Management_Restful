@@ -1,9 +1,9 @@
 package loremipsum.dev.taskmanagement.exception;
 
-import loremipsum.dev.taskmanagement.config.Message;
+import loremipsum.dev.taskmanagement.resultHelper.Message;
 
 public class TaskNotFoundException extends RuntimeException{
     public TaskNotFoundException(String id) {
-        super(Message.TASK_NOT_FOUND + id);
+        super(id);
     }
 }

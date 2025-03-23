@@ -2,6 +2,9 @@ package loremipsum.dev.taskmanagement;
 
 import loremipsum.dev.taskmanagement.abstracts.IAttachmentService;
 import loremipsum.dev.taskmanagement.entities.Attachment;
+import loremipsum.dev.taskmanagement.exception.AttachmentNotFoundException;
+import loremipsum.dev.taskmanagement.exception.GlobalExceptionHandler;
+import loremipsum.dev.taskmanagement.exception.TaskNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,18 +44,30 @@ public class AttachmentControllerTest {
     @Captor
     private ArgumentCaptor<MockMultipartFile> fileCaptor;
 
+    private UUID taskId;
+    private UUID attachmentId;
+    private MockMultipartFile file;
+    private Attachment attachment;
+    private List<Attachment> attachments;
+
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(attachmentController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(attachmentController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
+
+        taskId = UUID.randomUUID();
+        attachmentId = UUID.randomUUID();
+        file = new MockMultipartFile("file", "file.txt", MediaType.TEXT_PLAIN_VALUE, "Test content".getBytes());
+
+        attachment = new Attachment();
+        attachment.setId(attachmentId);
+
+        attachments = List.of(attachment);
     }
 
     @Test
     void testAddAttachmentToTask() throws Exception {
-        UUID taskId = UUID.randomUUID();
-        MockMultipartFile file = new MockMultipartFile("file", "file.txt", MediaType.TEXT_PLAIN_VALUE, "Test content".getBytes());
-        Attachment attachment = new Attachment();
-        attachment.setId(UUID.randomUUID());
-
         when(attachmentService.addAttachmentToTask(any(UUID.class), any(MockMultipartFile.class))).thenReturn(attachment);
 
         mockMvc.perform(multipart("/attachments/task/{taskId}", taskId)
@@ -67,11 +82,6 @@ public class AttachmentControllerTest {
 
     @Test
     void testGetAttachmentsByTaskId() throws Exception {
-        UUID taskId = UUID.randomUUID();
-        Attachment attachment = new Attachment();
-        attachment.setId(UUID.randomUUID());
-        List<Attachment> attachments = List.of(attachment);
-
         when(attachmentService.getAttachmentsByTaskId(any(UUID.class))).thenReturn(attachments);
 
         mockMvc.perform(get("/attachments/task/{taskId}", taskId))
@@ -84,12 +94,43 @@ public class AttachmentControllerTest {
 
     @Test
     void testDeleteAttachment() throws Exception {
-        UUID attachmentId = UUID.randomUUID();
-
         doNothing().when(attachmentService).deleteAttachment(any(UUID.class));
 
         mockMvc.perform(delete("/attachments/{attachmentId}", attachmentId))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Process successfully executed."))
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.status").value(true));
+
+        verify(attachmentService).deleteAttachment(uuidCaptor.capture());
+        assertThat(uuidCaptor.getValue()).isEqualTo(attachmentId);
+    }
+
+    @Test
+    void testAddAttachmentToTask_TaskNotFound() throws Exception {
+        doThrow(new TaskNotFoundException(taskId.toString())).when(attachmentService).addAttachmentToTask(any(UUID.class), any(MockMultipartFile.class));
+
+        mockMvc.perform(multipart("/attachments/task/{taskId}", taskId)
+                        .file(file))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Task not found with ID: " + taskId))
+                .andExpect(jsonPath("$.code").value("404"))
+                .andExpect(jsonPath("$.status").value(false));
+
+        verify(attachmentService).addAttachmentToTask(uuidCaptor.capture(), fileCaptor.capture());
+        assertThat(uuidCaptor.getValue()).isEqualTo(taskId);
+        assertThat(fileCaptor.getValue().getOriginalFilename()).isEqualTo(file.getOriginalFilename());
+    }
+
+    @Test
+    void testDeleteAttachment_NotFound() throws Exception {
+        doThrow(new AttachmentNotFoundException(attachmentId.toString())).when(attachmentService).deleteAttachment(any(UUID.class));
+
+        mockMvc.perform(delete("/attachments/{attachmentId}", attachmentId))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Data not found."))
+                .andExpect(jsonPath("$.code").value("404"))
+                .andExpect(jsonPath("$.status").value(false));
 
         verify(attachmentService).deleteAttachment(uuidCaptor.capture());
         assertThat(uuidCaptor.getValue()).isEqualTo(attachmentId);

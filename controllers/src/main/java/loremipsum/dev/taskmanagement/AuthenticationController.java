@@ -17,13 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-public class AuthController {
-
+public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final LogoutService logoutService;
 
@@ -40,6 +37,5 @@ public class AuthController {
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         logoutService.logout(request, response, authentication);
     }
-
 
 }

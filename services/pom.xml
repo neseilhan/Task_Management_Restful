@@ -49,6 +49,7 @@
                                 <exclude>**/utils/**</exclude>
                                 <exclude>**/exception/**</exclude>
                                 <exclude>**/config/**</exclude>
+                                <exclude>**/resultHelper/**</exclude>
                             </excludes>
                         </configuration>
                     </execution>

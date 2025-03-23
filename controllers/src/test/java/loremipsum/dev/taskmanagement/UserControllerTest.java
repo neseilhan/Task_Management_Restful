@@ -1,6 +1,5 @@
 package loremipsum.dev.taskmanagement;
 
-import lombok.SneakyThrows;
 import loremipsum.dev.taskmanagement.abstracts.IUserService;
 import loremipsum.dev.taskmanagement.entities.User;
 import loremipsum.dev.taskmanagement.enums.RoleType;
@@ -49,8 +48,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void testGetUserById() {
+    void testGetUserById() throws Exception {
         UUID userId = UUID.randomUUID();
         User user = new User();
         user.setId(userId);
@@ -65,8 +63,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void testGetUserByIdNotFound() {
+    void testGetUserByIdNotFound() throws Exception {
         UUID userId = UUID.randomUUID();
         when(userService.getUserById(userId)).thenReturn(Optional.empty());
 
@@ -77,8 +74,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void testGetAllUsers() {
+    void testGetAllUsers() throws Exception {
         User user1 = new User();
         user1.setId(UUID.randomUUID());
         User user2 = new User();
@@ -97,8 +93,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void testGetAllUsersNull() {
+    void testGetAllUsersNull() throws Exception {
         when(userService.getAllUsers()).thenReturn(null);
 
         mockMvc.perform(get("/users"))
@@ -106,9 +101,9 @@ public class UserControllerTest {
 
         verify(userService).getAllUsers();
     }
+
     @Test
-    @SneakyThrows
-    void testGetAllUsersNoContent() {
+    void testGetAllUsersNoContent() throws Exception {
         when(userService.getAllUsers()).thenReturn(List.of());
 
         mockMvc.perform(get("/users"))
@@ -118,8 +113,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void testDeleteUser() {
+    void testDeleteUser() throws Exception {
         UUID userId = UUID.randomUUID();
 
         mockMvc.perform(delete("/users/{id}", userId))
@@ -130,8 +124,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void testDeleteUserNotFound() {
+    void testDeleteUserNotFound() throws Exception {
         UUID userId = UUID.randomUUID();
         doThrow(new UserNotFoundException(userId.toString()))
                 .when(userService).deleteUser(userId);
@@ -142,8 +135,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void testAssignUserToTask() {
+    void testAssignUserToTask() throws Exception {
         UUID userId = UUID.randomUUID();
         UUID taskId = UUID.randomUUID();
         AssignUserRequest request = new AssignUserRequest();
@@ -165,8 +157,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void testAssignUserToProject() {
+    void testAssignUserToProject() throws Exception {
         UUID userId = UUID.randomUUID();
         UUID projectId = UUID.randomUUID();
         AssignUserRequest request = new AssignUserRequest();
@@ -188,8 +179,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void testAssignUserToTaskDuplicate() {
+    void testAssignUserToTaskDuplicate() throws Exception {
         UUID userId = UUID.randomUUID();
         UUID taskId = UUID.randomUUID();
         AssignUserRequest request = new AssignUserRequest();
@@ -211,8 +201,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void testUpdateUser() {
+    void testUpdateUser() throws Exception {
         UUID userId = UUID.randomUUID();
         User user = new User();
         user.setId(userId);
@@ -241,8 +230,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void testUpdateUserNotFound() {
+    void testUpdateUserNotFound() throws Exception {
         UUID userId = UUID.randomUUID();
         UpdateUserRequest request = new UpdateUserRequest();
         request.setUsername("Updated Username");

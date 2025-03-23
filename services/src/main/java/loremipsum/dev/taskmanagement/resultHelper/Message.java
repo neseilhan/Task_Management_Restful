@@ -1,9 +1,9 @@
-package loremipsum.dev.taskmanagement.config;
+package loremipsum.dev.taskmanagement.resultHelper;
 
 public class Message {
     public static final String CREATED = "Data successfully saved.";
     public static final String OK = "Process successfully executed.";
-    public static final String NOT_FOUND = "Data not found.";
+    public static final String DATA_NOT_FOUND = "Data not found.";
     public static final String RECORD_NOT_FOUND_WITH_ID = "Record not found in the system with id: ";
     public static final String RECORD_ALREADY_EXISTS = "Record already exists in the system with id: ";
     public static final String FORBIDDEN = "You do not have permission to perform this action.";

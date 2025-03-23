@@ -1,4 +1,4 @@
-package loremipsum.dev.taskmanagement.config;
+package loremipsum.dev.taskmanagement.resultHelper;
 
 public class ResultHelper {
     public static <T> ResultData<T> created(T data){
@@ -10,7 +10,7 @@ public class ResultHelper {
     }
 
     public static Result notFoundError(){
-        return new Result("404", Message.NOT_FOUND, false);
+        return new Result("404", Message.DATA_NOT_FOUND, false);
     }
 
     public static Result forbiddenError() {
@@ -36,4 +36,18 @@ public class ResultHelper {
         return new Result("400", Message.VALIDATION_ERROR, false);
     }
 
+    public static Result userNotFoundError(String id) {
+        return new Result("404", Message.USER_NOT_FOUND + id, false);
+    }
+
+    public static Result taskNotFoundError(String id) {
+        return new Result("404", Message.TASK_NOT_FOUND + id, false);
+    }
+    public static Result projectNotFoundError(String id) {
+        return new Result("404", Message.PROJECT_NOT_FOUND + id, false);
+    }
+
+    public static Result attachmentNotFoundError(String id) {
+        return new Result("404", Message.ATTACHMENT_NOT_FOUND + id, false);
+    }
 }

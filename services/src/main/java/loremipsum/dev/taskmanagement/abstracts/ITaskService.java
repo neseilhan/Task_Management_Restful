@@ -15,4 +15,5 @@ public interface ITaskService {
     void changeTaskStatus(UUID taskId, TaskStatus status, String reason);
     void setTaskPriority(UUID taskId, TaskPriority priority);
     void updateTaskTitleAndDescription(UUID taskId, String title, String description);
+    void deleteTask(UUID taskId);
 }

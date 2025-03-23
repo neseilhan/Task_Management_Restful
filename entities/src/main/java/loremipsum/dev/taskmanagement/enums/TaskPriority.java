@@ -1,7 +1,7 @@
 package loremipsum.dev.taskmanagement.enums;
 
 public enum TaskPriority {
-   CRITICAL("CRITICAL"),
+    CRITICAL("CRITICAL"),
     HIGH("HIGH"),
     MEDIUM("MEDIUM"),
     LOW("LOW");

@@ -1,13 +1,19 @@
 package loremipsum.dev.taskmanagement;
 
+import loremipsum.dev.taskmanagement.abstracts.IProjectService;
+import loremipsum.dev.taskmanagement.abstracts.IUserService;
 import loremipsum.dev.taskmanagement.concretes.TaskService;
+import loremipsum.dev.taskmanagement.entities.Project;
 import loremipsum.dev.taskmanagement.entities.Task;
+import loremipsum.dev.taskmanagement.entities.User;
 import loremipsum.dev.taskmanagement.enums.TaskPriority;
 import loremipsum.dev.taskmanagement.enums.TaskStatus;
 import loremipsum.dev.taskmanagement.exception.InvalidTaskStateException;
 import loremipsum.dev.taskmanagement.exception.TaskNotFoundException;
+import loremipsum.dev.taskmanagement.repositories.ProjectRepository;
 import loremipsum.dev.taskmanagement.repositories.TaskRepository;
-import loremipsum.dev.taskmanagement.utils.TaskStateFlow;
+import loremipsum.dev.taskmanagement.repositories.UserRepository;
+import loremipsum.dev.taskmanagement.config.TaskStateFlow;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -26,8 +33,20 @@ public class TaskServiceTest {
     @Mock
     private TaskRepository taskRepository;
 
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private ProjectRepository projectRepository;
+
     @InjectMocks
     private TaskService taskService;
+
+    @Mock
+    private IProjectService projectService;
+
+    @Mock
+    private IUserService userService;
 
     private Task task;
 
@@ -44,11 +63,27 @@ public class TaskServiceTest {
 
     @Test
     void testCreateTask() {
+        User assignee = new User();
+        assignee.setId(UUID.randomUUID());
+
+        Project project = new Project();
+        project.setId(UUID.randomUUID());
+
+        task.setAssignee(assignee);
+        task.setProject(project);
+
+        when(userService.getUserById(assignee.getId())).thenReturn(Optional.of(assignee));
+        when(projectService.getProjectById(project.getId())).thenReturn(Optional.of(project));
         when(taskRepository.save(any(Task.class))).thenReturn(task);
 
         Task createdTask = taskService.createTask(task);
 
-        assertThat(createdTask).isEqualTo(task);
+        assertThat(createdTask).isNotNull();
+        assertThat(createdTask.getAssignee()).isEqualTo(assignee);
+        assertThat(createdTask.getProject()).isEqualTo(project);
+
+        verify(userService).getUserById(assignee.getId());
+        verify(projectService).getProjectById(project.getId());
         verify(taskRepository).save(any(Task.class));
     }
 
@@ -121,17 +156,24 @@ public class TaskServiceTest {
     }
 
     @Test
-    void testGetAllTasks() {
-        List<Task> tasks = List.of(task);
-        when(taskRepository.findAll()).thenReturn(tasks);
+    void testGetAllTasks_Success() {
+        when(taskRepository.findAll()).thenReturn(List.of(task));
 
-        List<Task> result = taskService.getAllTasks();
+        List<Task> tasks = taskService.getAllTasks();
 
-        assertThat(result).isNotEmpty();
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0)).isEqualTo(task);
+        assertEquals(1, tasks.size());
+        assertEquals(task.getId(), tasks.get(0).getId());
+    }
 
-        verify(taskRepository).findAll();
+    @Test
+    void testGetAllTasks_NoTasksFound() {
+        when(taskRepository.findAll()).thenReturn(Collections.emptyList());
+
+        TaskNotFoundException exception = assertThrows(TaskNotFoundException.class, () -> {
+            taskService.getAllTasks();
+        });
+
+        assertEquals("Data not found.", exception.getMessage());
     }
 
     @Test
@@ -307,6 +349,30 @@ public class TaskServiceTest {
 
         verify(taskRepository).findById(taskId);
         verify(taskRepository, never()).save(any(Task.class));
+    }
+    @Test
+    void testDeleteTask_Success() {
+        UUID taskId = task.getId();
+
+        when(taskRepository.findById(taskId)).thenReturn(Optional.of(task));
+        doNothing().when(taskRepository).delete(task);
+
+        taskService.deleteTask(taskId);
+
+        verify(taskRepository).findById(taskId);
+        verify(taskRepository).delete(task);
+    }
+
+    @Test
+    void testDeleteTask_NotFound() {
+        UUID taskId = UUID.randomUUID();
+
+        when(taskRepository.findById(taskId)).thenReturn(Optional.empty());
+
+        assertThrows(TaskNotFoundException.class, () -> taskService.deleteTask(taskId));
+
+        verify(taskRepository).findById(taskId);
+        verify(taskRepository, never()).delete(any(Task.class));
     }
 
 

@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import loremipsum.dev.taskmanagement.concretes.AuthenticationService;
 import loremipsum.dev.taskmanagement.concretes.LogoutService;
+import loremipsum.dev.taskmanagement.exception.GlobalExceptionHandler;
 import loremipsum.dev.taskmanagement.request.LoginRequest;
 import loremipsum.dev.taskmanagement.request.RegisterRequest;
 import loremipsum.dev.taskmanagement.response.AuthResponse;
@@ -16,13 +17,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthControllerTest {
+public class AuthenticationControllerTest {
 
     @Mock
     private AuthenticationService authenticationService;
@@ -31,15 +34,20 @@ public class AuthControllerTest {
     private LogoutService logoutService;
 
     @InjectMocks
-    private AuthController authController;
+    private AuthenticationController authController;
 
     private RegisterRequest registerRequest;
     private RegisterResponse registerResponse;
     private LoginRequest loginRequest;
     private AuthResponse authResponse;
 
+
     @BeforeEach
     void setUp() {
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(authController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
+
         registerRequest = new RegisterRequest();
         registerRequest.setUsername("testuser");
         registerRequest.setEmail("testuser@example.com");

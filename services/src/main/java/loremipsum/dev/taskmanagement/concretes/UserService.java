@@ -1,13 +1,11 @@
 package loremipsum.dev.taskmanagement.concretes;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import loremipsum.dev.taskmanagement.abstracts.IUserService;
-import loremipsum.dev.taskmanagement.config.Message;
+import loremipsum.dev.taskmanagement.resultHelper.Message;
 import loremipsum.dev.taskmanagement.entities.Project;
 import loremipsum.dev.taskmanagement.entities.Task;
 import loremipsum.dev.taskmanagement.entities.User;
-import loremipsum.dev.taskmanagement.enums.RoleType;
 import loremipsum.dev.taskmanagement.exception.ProjectNotFoundException;
 import loremipsum.dev.taskmanagement.exception.TaskNotFoundException;
 import loremipsum.dev.taskmanagement.exception.UserNotFoundException;
@@ -16,7 +14,6 @@ import loremipsum.dev.taskmanagement.repositories.TaskRepository;
 import loremipsum.dev.taskmanagement.repositories.UserRepository;
 import loremipsum.dev.taskmanagement.request.UpdateUserRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -49,8 +46,8 @@ public class UserService implements IUserService {
     @PreAuthorize("hasRole('PROJECT_MANAGER')")
     public List<User> getAllUsers() {
         List<User> users = userRepository.findAll();
-        if (users.isEmpty()) {
-            throw new UserNotFoundException(Message.NOT_FOUND);
+        if (users == null || users.isEmpty()) {
+            throw new UserNotFoundException(Message.USER_NOT_FOUND);
         }
         return users;
     }

@@ -2,8 +2,9 @@ package loremipsum.dev.taskmanagement;
 
 import lombok.RequiredArgsConstructor;
 import loremipsum.dev.taskmanagement.abstracts.IProjectService;
-import loremipsum.dev.taskmanagement.config.ResultData;
-import loremipsum.dev.taskmanagement.config.ResultHelper;
+import loremipsum.dev.taskmanagement.resultHelper.Result;
+import loremipsum.dev.taskmanagement.resultHelper.ResultData;
+import loremipsum.dev.taskmanagement.resultHelper.ResultHelper;
 import loremipsum.dev.taskmanagement.entities.Project;
 import loremipsum.dev.taskmanagement.entities.Task;
 import loremipsum.dev.taskmanagement.entities.User;
@@ -30,10 +31,10 @@ public class ProjectController {
     private final IProjectService projectService;
 
     @PostMapping("/create")
-    public ResponseEntity<ResultData<ProjectResponse>> createProject(@RequestBody ProjectRequest projectRequest) {
+    public ResponseEntity<ProjectResponse> createProject(@RequestBody ProjectRequest projectRequest) {
         Project createdProject = projectService.createProject(projectRequest.toProject());
         ProjectResponse projectResponse = new ProjectResponse(createdProject);
-        return ResponseEntity.ok(ResultHelper.success(projectResponse));
+        return ResponseEntity.ok(projectResponse);
     }
 
     @PutMapping("/{projectId}")
@@ -57,9 +58,9 @@ public class ProjectController {
         return ResponseEntity.ok(projectResponses);
     }
     @DeleteMapping("/{projectId}")
-    public ResponseEntity<ResultData<Void>> deleteProject(@PathVariable UUID projectId) {
+    public ResponseEntity<Result> deleteProject(@PathVariable UUID projectId) {
         projectService.deleteProject(projectId);
-        return ResponseEntity.ok(ResultHelper.success(null)); // success response olablir
+        return ResponseEntity.ok(ResultHelper.success());
     }
 
     @GetMapping("/department/{departmentName}")

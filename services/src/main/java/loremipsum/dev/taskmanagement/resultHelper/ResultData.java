@@ -1,4 +1,4 @@
-package loremipsum.dev.taskmanagement.config;
+package loremipsum.dev.taskmanagement.resultHelper;
 
 public class ResultData<T> extends Result {
 

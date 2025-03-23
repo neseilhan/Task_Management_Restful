@@ -13,7 +13,9 @@ import loremipsum.dev.taskmanagement.repositories.UserRepository;
 import loremipsum.dev.taskmanagement.request.LoginRequest;
 import loremipsum.dev.taskmanagement.request.RegisterRequest;
 import loremipsum.dev.taskmanagement.response.AuthResponse;
+import loremipsum.dev.taskmanagement.response.RegisterResponse;
 import loremipsum.dev.taskmanagement.token.Token;
+import loremipsum.dev.taskmanagement.token.TokenType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,15 +28,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthenticationServiceTest {
-
 
     @Mock
     private UserRepository userRepository;
@@ -70,20 +73,20 @@ public class AuthenticationServiceTest {
     void testRegister() {
         when(passwordEncoder.encode(any(CharSequence.class))).thenReturn("encodedPassword123");
 
-        RegisterRequest request = new RegisterRequest("john.doe", "john.doe@example.com", "password123", RoleType.TEAM_MEMBER);
-        User user = new User("john.doe", "john.doe@example.com", "encodedPassword123", Collections.singleton(RoleType.TEAM_MEMBER));
+        RegisterRequest request = new RegisterRequest("nese.ilhan", "nese.ilhan@example.com", "password123", RoleType.TEAM_MEMBER);
+        User user = new User("nese.ilhan", "nese.ilhan@example.com", "encodedPassword123", Collections.singleton(RoleType.TEAM_MEMBER));
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(jwtService.generateToken(any(User.class))).thenReturn("jwt-token");
 
-        AuthResponse response = authenticationService.register(request);
-        assertThat(response.getAccessToken()).isEqualTo("jwt-token");
+        RegisterResponse response = authenticationService.register(request);
+        assertThat(response.getMessage()).isEqualTo("User registered successfully.");
         verify(userRepository).save(any(User.class));
     }
 
     @Test
     void testAuthenticate() {
-        LoginRequest request = new LoginRequest("john.doe@example.com", "password123");
-        User user = new User("john.doe", "john.doe@example.com", "password123", Collections.singleton(RoleType.TEAM_MEMBER));
+        LoginRequest request = new LoginRequest("nese.ilhan@example.com", "password123");
+        User user = new User("nese.ilhan", "nese.ilhan@example.com", "password123", Collections.singleton(RoleType.TEAM_MEMBER));
         when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
         when(jwtService.generateToken(user)).thenReturn("jwt-token");
         when(authenticationManager.authenticate(any())).thenReturn(null);
@@ -95,10 +98,60 @@ public class AuthenticationServiceTest {
     }
 
     @Test
+    void testSaveUserToken() throws Exception {
+        User user = new User("nese.ilhan", "nese.ilhan@example.com", "password123", Collections.singleton(RoleType.TEAM_MEMBER));
+
+        Method method = AuthenticationService.class.getDeclaredMethod("saveUserToken", User.class, String.class);
+        method.setAccessible(true);
+        method.invoke(authenticationService, user, "jwt-token");
+
+        verify(tokenRepository).save(tokenCaptor.capture());
+
+        Token savedToken = tokenCaptor.getValue();
+        assertThat(savedToken.getUser()).isEqualTo(user);
+        assertThat(savedToken.getToken()).isEqualTo("jwt-token");
+        assertThat(savedToken.getTokenType()).isEqualTo(TokenType.BEARER);
+        assertThat(savedToken.isExpired()).isFalse();
+        assertThat(savedToken.isRevoked()).isFalse();
+    }
+
+    @Test
+    void testRevokeAllUserTokens_noValidTokens() throws Exception {
+        User user = new User("nese.ilhan", "nese.ilhan@example.com", "password123", Collections.singleton(RoleType.TEAM_MEMBER));
+        when(tokenRepository.findAllValidTokenByUser(user.getId())).thenReturn(Collections.emptyList());
+
+        Method method = AuthenticationService.class.getDeclaredMethod("revokeAllUserTokens", User.class);
+        method.setAccessible(true);
+        method.invoke(authenticationService, user);
+
+        verify(tokenRepository, never()).saveAll(anyList());
+    }
+
+    @Test
+    void testRevokeAllUserTokens_withValidTokens() throws Exception {
+        User user = new User("nese.ilhan", "nese.ilhan@example.com", "password123", Collections.singleton(RoleType.TEAM_MEMBER));
+        List<Token> validUserTokens = List.of(
+                Token.builder().token("token1").revoked(false).expired(false).build(),
+                Token.builder().token("token2").revoked(false).expired(false).build()
+        );
+        when(tokenRepository.findAllValidTokenByUser(user.getId())).thenReturn(validUserTokens);
+
+        Method method = AuthenticationService.class.getDeclaredMethod("revokeAllUserTokens", User.class);
+        method.setAccessible(true);
+        method.invoke(authenticationService, user);
+
+        validUserTokens.forEach(token -> {
+            assertThat(token.isExpired()).isTrue();
+            assertThat(token.isRevoked()).isTrue();
+        });
+        verify(tokenRepository).saveAll(validUserTokens);
+    }
+
+    @Test
     void testRefreshToken() throws Exception {
         String refreshToken = "refresh-token";
-        String userEmail = "john.doe@example.com";
-        User user = new User("john.doe", "john.doe@example.com", "password123", Collections.singleton(RoleType.TEAM_MEMBER));
+        String userEmail = "nese.ilhan@example.com";
+        User user = new User("nese.ilhan", "nese.ilhan@example.com", "password123", Collections.singleton(RoleType.TEAM_MEMBER));
 
         when(jwtService.extractUsername(refreshToken)).thenReturn(userEmail);
         when(userRepository.findByEmail(userEmail)).thenReturn(Optional.of(user));
@@ -130,34 +183,6 @@ public class AuthenticationServiceTest {
         verify(jwtService).generateToken(user);
         String responseBody = byteArrayOutputStream.toString();
         assertThat(responseBody).contains("new-jwt-token");
-    }
-
-    @Test
-    void testRevokeAllUserTokens_noValidTokens() throws Exception {
-        User user = new User("john.doe", "john.doe@example.com", "password123", Collections.singleton(RoleType.TEAM_MEMBER));
-        when(tokenRepository.findAllValidTokenByUser(user.getId())).thenReturn(Collections.emptyList());
-        Method method = AuthenticationService.class.getDeclaredMethod("revokeAllUserTokens", User.class);
-        method.setAccessible(true);
-        method.invoke(authenticationService, user);
-        verify(tokenRepository, never()).saveAll(anyList());
-    }
-
-    @Test
-    void testRevokeAllUserTokens_withValidTokens() throws Exception {
-        User user = new User("john.doe", "john.doe@example.com", "password123", Collections.singleton(RoleType.TEAM_MEMBER));
-        List<Token> validUserTokens = Arrays.asList(
-                Token.builder().token("token1").revoked(false).expired(false).build(),
-                Token.builder().token("token2").revoked(false).expired(false).build()
-        );
-        when(tokenRepository.findAllValidTokenByUser(user.getId())).thenReturn(validUserTokens);
-        Method method = AuthenticationService.class.getDeclaredMethod("revokeAllUserTokens", User.class);
-        method.setAccessible(true);
-        method.invoke(authenticationService, user);
-        validUserTokens.forEach(token -> {
-            assertThat(token.isExpired()).isTrue();
-            assertThat(token.isRevoked()).isTrue();
-        });
-        verify(tokenRepository).saveAll(validUserTokens);
     }
 
     @Test
@@ -194,7 +219,7 @@ public class AuthenticationServiceTest {
     @Test
     void testRefreshToken_userNotFound() throws IOException {
         String validAuthHeader = "Bearer validRefreshToken";
-        String userEmail = "user@example.com";
+        String userEmail = "nese.ilhan@example.com";
         String refreshToken = "validRefreshToken";
 
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn(validAuthHeader);
@@ -205,7 +230,7 @@ public class AuthenticationServiceTest {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             authenticationService.refreshToken(request, response);
         });
-        assertEquals("User not found", exception.getMessage());
+        assertThat(exception.getMessage()).isEqualTo("User not found");
 
         verify(jwtService, never()).isTokenValid(any(), any());
         verify(tokenRepository, never()).save(any(Token.class));
@@ -228,7 +253,7 @@ public class AuthenticationServiceTest {
     @Test
     void testRefreshToken_invalidToken() throws IOException {
         String validAuthHeader = "Bearer invalidRefreshToken";
-        String userEmail = "user@example.com";
+        String userEmail = "nese.ilhan@example.com";
         String refreshToken = "invalidRefreshToken";
 
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn(validAuthHeader);
@@ -258,10 +283,10 @@ public class AuthenticationServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(new User());
         when(jwtService.generateToken(any(User.class))).thenReturn("jwtToken");
 
-        AuthResponse response = authenticationService.register(request);
+        RegisterResponse response = authenticationService.register(request);
 
         assertNotNull(response);
-        assertEquals("jwtToken", response.getAccessToken());
+        assertEquals("User registered successfully.", response.getMessage());
         verify(userRepository).save(any(User.class));
         verify(jwtService).generateToken(any(User.class));
     }
@@ -278,10 +303,10 @@ public class AuthenticationServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(new User());
         when(jwtService.generateToken(any(User.class))).thenReturn("jwtToken");
 
-        AuthResponse response = authenticationService.register(request);
+        RegisterResponse response = authenticationService.register(request);
 
         assertNotNull(response);
-        assertEquals("jwtToken", response.getAccessToken());
+        assertEquals("User registered successfully.", response.getMessage());
         verify(userRepository).save(any(User.class));
         verify(jwtService).generateToken(any(User.class));
     }

@@ -1,8 +1,8 @@
 package loremipsum.dev.taskmanagement.exception;
 
 import lombok.NoArgsConstructor;
-import loremipsum.dev.taskmanagement.config.Result;
-import loremipsum.dev.taskmanagement.config.ResultHelper;
+import loremipsum.dev.taskmanagement.resultHelper.Result;
+import loremipsum.dev.taskmanagement.resultHelper.ResultHelper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -32,20 +32,21 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(ProjectNotFoundException.class)
     public ResponseEntity<Result> handleProjectNotFoundException(ProjectNotFoundException e) {
-        Result result = ResultHelper.notFoundError();
+        Result result = ResultHelper.projectNotFoundError(e.getMessage());
         return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(TaskNotFoundException.class)
     public ResponseEntity<Result> handleTaskNotFoundException(TaskNotFoundException e) {
-        Result result = ResultHelper.notFoundError();
+        Result result = ResultHelper.taskNotFoundError(e.getMessage());
         return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<Result> handleUserNotFoundException(UserNotFoundException e) {
-        Result result = ResultHelper.notFoundError();
+        Result result = ResultHelper.userNotFoundError( e.getMessage());
         return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
     }
+
     @ExceptionHandler(DuplicateRecordException.class)
     public ResponseEntity<Result> handleDuplicateRecordException(DuplicateRecordException e) {
         Result result = ResultHelper.duplicateError();

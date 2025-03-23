@@ -1,8 +1,8 @@
 package loremipsum.dev.taskmanagement;
 import lombok.RequiredArgsConstructor;
 import loremipsum.dev.taskmanagement.abstracts.IUserService;
-import loremipsum.dev.taskmanagement.config.Result;
-import loremipsum.dev.taskmanagement.config.ResultHelper;
+import loremipsum.dev.taskmanagement.resultHelper.Result;
+import loremipsum.dev.taskmanagement.resultHelper.ResultHelper;
 import loremipsum.dev.taskmanagement.entities.User;
 import loremipsum.dev.taskmanagement.request.AssignUserRequest;
 import loremipsum.dev.taskmanagement.request.UpdateUserRequest;
@@ -31,7 +31,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         List<User> users = userService.getAllUsers();
-        if (users == null) {
+        if (users == null || users.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         List<UserResponse> userResponses = users.stream()
@@ -53,9 +53,9 @@ public class UserController {
     }
 
     @PostMapping("/assign-to-project")
-    public ResponseEntity<Void> assignUserToProject(@RequestBody AssignUserRequest request) {
+    public ResponseEntity<Result> assignUserToProject(@RequestBody AssignUserRequest request) {
         userService.assignUserToProject(request.getProjectId(), request.getUserId());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ResultHelper.success());
     }
     @PutMapping("/{id}")
     public ResponseEntity<UserResponse> updateUser(@PathVariable UUID id, @RequestBody UpdateUserRequest request) {

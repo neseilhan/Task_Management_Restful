@@ -1,12 +1,16 @@
 package loremipsum.dev.taskmanagement.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import loremipsum.dev.taskmanagement.entities.Attachment;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class AttachmentResponse {
     private UUID id;
     private UUID taskId;

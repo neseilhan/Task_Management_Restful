@@ -18,7 +18,6 @@ public class CommentController {
 
     private final ICommentService commentService;
 
-
     @PostMapping("/task/{taskId}/user/{userId}")
     public ResponseEntity<CommentResponse> addCommentToTask(@PathVariable UUID taskId, @PathVariable UUID userId, @RequestBody String content) {
         Comment createdComment = commentService.addCommentToTask(taskId, userId, content);

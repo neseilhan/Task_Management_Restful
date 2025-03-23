@@ -1,15 +1,21 @@
 package loremipsum.dev.taskmanagement.concretes;
 
 import lombok.RequiredArgsConstructor;
+import loremipsum.dev.taskmanagement.abstracts.IProjectService;
 import loremipsum.dev.taskmanagement.abstracts.ITaskService;
-import loremipsum.dev.taskmanagement.config.Message;
+import loremipsum.dev.taskmanagement.abstracts.IUserService;
+import loremipsum.dev.taskmanagement.entities.Project;
 import loremipsum.dev.taskmanagement.entities.Task;
+import loremipsum.dev.taskmanagement.entities.User;
 import loremipsum.dev.taskmanagement.enums.TaskPriority;
 import loremipsum.dev.taskmanagement.enums.TaskStatus;
 import loremipsum.dev.taskmanagement.exception.InvalidTaskStateException;
+import loremipsum.dev.taskmanagement.exception.ProjectNotFoundException;
 import loremipsum.dev.taskmanagement.exception.TaskNotFoundException;
+import loremipsum.dev.taskmanagement.exception.UserNotFoundException;
 import loremipsum.dev.taskmanagement.repositories.TaskRepository;
-import loremipsum.dev.taskmanagement.utils.TaskStateFlow;
+import loremipsum.dev.taskmanagement.config.TaskStateFlow;
+import loremipsum.dev.taskmanagement.resultHelper.Message;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +27,24 @@ import java.util.UUID;
 public class TaskService implements ITaskService {
     private final TaskRepository taskRepository;
 
+    private final IUserService userService;
+    private final IProjectService projectService;
+
     @PreAuthorize("hasAnyRole('TEAM_LEADER', 'PROJECT_MANAGER')")
     @Override
     public Task createTask(Task task) {
+        UUID assigneeId = task.getAssignee().getId();
+        UUID projectId = task.getProject().getId();
+
+        User assignee = userService.getUserById(assigneeId)
+                .orElseThrow(() -> new UserNotFoundException(assigneeId.toString()));
+
+        Project project = projectService.getProjectById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException(projectId.toString()));
+
+        task.setAssignee(assignee);
+        task.setProject(project);
+
         return taskRepository.save(task);
     }
 
@@ -59,30 +80,27 @@ public class TaskService implements ITaskService {
     @PreAuthorize("hasAnyRole('TEAM_MEMBER', 'TEAM_LEADER', 'PROJECT_MANAGER')")
     @Override
     public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+        List<Task> tasks = taskRepository.findAll();
+        if (tasks == null || tasks.isEmpty()) {
+            throw new TaskNotFoundException(Message.DATA_NOT_FOUND);
+        }
+        return tasks;
     }
 
     @PreAuthorize("hasAnyRole('TEAM_MEMBER', 'TEAM_LEADER', 'PROJECT_MANAGER')")
     @Override
     public void changeTaskStatus(UUID taskId, TaskStatus status, String reason) {
         Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new TaskNotFoundException("Task not found with id: " + taskId));
+                .orElseThrow(() -> new TaskNotFoundException(taskId.toString()));
 
-        if (task.getStatus() == TaskStatus.COMPLETED) {
-            throw new InvalidTaskStateException("Cannot change state of a completed task.");
-        }
-
-        if (!TaskStateFlow.isValidTransition(task.getStatus(), status)) {
-            throw new InvalidTaskStateException("Invalid state transition from " + task.getStatus() + " to " + status);
-        }
-
-        if (status == TaskStatus.CANCELLED && (reason == null || reason.isEmpty())) {
-            throw new InvalidTaskStateException("Reason must be provided for cancelling a task.");
-        }
+        validateTaskStatusChange(task, status, reason);
 
         task.setStatus(status);
-        task.setCancelReason(status == TaskStatus.CANCELLED ? reason : null);
-        task.setBlockReason(status == TaskStatus.BLOCKED ? reason : null);
+        if (status == TaskStatus.CANCELLED) {
+            task.setCancelReason(reason);
+        } else if (status == TaskStatus.BLOCKED) {
+            task.setBlockReason(reason);
+        }
         taskRepository.save(task);
     }
 
@@ -105,4 +123,27 @@ public class TaskService implements ITaskService {
         existingTask.setDescription(description);
         taskRepository.save(existingTask);
     }
+    @PreAuthorize("hasAnyRole('TEAM_LEADER', 'PROJECT_MANAGER')")
+    @Override
+    public void deleteTask(UUID taskId) {
+        Task existingTask = taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException(taskId.toString()));
+
+        taskRepository.delete(existingTask);
+    }
+
+    private void validateTaskStatusChange(Task task, TaskStatus status, String reason) {
+        if (task.getStatus() == TaskStatus.COMPLETED) {
+            throw new InvalidTaskStateException("Cannot change the state of a completed task.");
+        }
+
+        if (!TaskStateFlow.isValidTransition(task.getStatus(), status)) {
+            throw new InvalidTaskStateException("Invalid state transition from " + task.getStatus() + " to " + status);
+        }
+
+        if (status == TaskStatus.CANCELLED && (reason == null || reason.isEmpty())) {
+            throw new InvalidTaskStateException("Reason must be provided for cancelling a task.");
+        }
+    }
+
 }

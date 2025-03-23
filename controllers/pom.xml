@@ -49,6 +49,7 @@
                                 <exclude>**/utils/**</exclude>
                                 <exclude>**/exception/**</exclude>
                                 <exclude>**/config/**</exclude>
+                                <exclude>**/objectMapper/**</exclude>
                             </excludes>
                         </configuration>
                     </execution>

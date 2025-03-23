@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import loremipsum.dev.taskmanagement.abstracts.IAttachmentService;
 import loremipsum.dev.taskmanagement.entities.Attachment;
 import loremipsum.dev.taskmanagement.entities.Task;
+import loremipsum.dev.taskmanagement.exception.AttachmentNotFoundException;
 import loremipsum.dev.taskmanagement.exception.DuplicateRecordException;
 import loremipsum.dev.taskmanagement.exception.TaskNotFoundException;
 import loremipsum.dev.taskmanagement.repositories.AttachmentRepository;
@@ -51,7 +52,13 @@ public class AttachmentService implements IAttachmentService {
     @PreAuthorize("hasAnyRole('TEAM_MEMBER', 'TEAM_LEADER', 'PROJECT_MANAGER')")
     @Override
     public List<Attachment> getAttachmentsByTaskId(UUID taskId) {
-        return attachmentRepository.findByTaskId(taskId);
+        List<Attachment> attachments = attachmentRepository.findByTaskId(taskId);
+
+        if (attachments.isEmpty()) {
+            throw new TaskNotFoundException(taskId.toString());
+        }
+
+        return attachments;
     }
 
     @PreAuthorize("hasAnyRole('TEAM_MEMBER', 'TEAM_LEADER', 'PROJECT_MANAGER')")
